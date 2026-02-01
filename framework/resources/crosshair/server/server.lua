@@ -1,0 +1,2 @@
+-- Crosshair Server-side Code
+-- Crosshair is purely client-side, no server code needed

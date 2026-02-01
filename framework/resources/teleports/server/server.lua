@@ -1,0 +1,3 @@
+-- Teleports Server-side Code
+-- Most teleport functionality is client-side
+-- This file handles any server validation if needed
