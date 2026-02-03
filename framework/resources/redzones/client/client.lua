@@ -10,35 +10,50 @@ local function perform(action, zone)
 
     TriggerServerEvent('redzones:action', action, zone)
 
-    kills = 0 headshots = 0
-
     if action == 'enter' then
+        -- Reset kills only on enter
+        kills = 0
+        headshots = 0
         reward = zoneData.reward
 
+        -- Show redzone UI
         SendNUIMessage({
             action = 'showRedzoneUI',
             location = zoneData.label
         })
 
-        SendNUIMessage({
-            action = 'updateRedzoneUI',
-            kills = kills,
-            reward = reward        
-        })
+        -- Small delay to ensure UI is shown before updating
+        SetTimeout(100, function()
+            SendNUIMessage({
+                action = 'updateRedzoneUI',
+                kills = kills,
+                reward = reward
+            })
+        end)
 
-        if cache.vehicle and Redzone.OnEnter['Delete Vehicle'] then 
+        if cache.vehicle and Redzone.OnEnter and Redzone.OnEnter['Delete Vehicle'] then
             DeleteVehicle(cache.vehicle, false)
         end
 
-        if Redzone.OnEnter['Toggle Money/Map'] then 
+        if Redzone.OnEnter and Redzone.OnEnter['Toggle Money/Map'] then
             Zen.Functions.NUI('hideMoneyUI', {})
             DisplayRadar(false)
         end
-    else
-        closestZone = nil
-        Zen.Functions.NUI('hideRedzoneUI', {})
 
-        if Redzone.OnEnter['Toggle Money/Map'] then 
+        -- Debug notification
+        if Zen.Config.Server and Zen.Config.Server.Debug then
+            Zen.Functions.Notify('Entered ' .. zoneData.label, 'location', '#00FF00')
+        end
+    else
+        -- Exiting zone
+        closestZone = nil
+
+        -- Hide redzone UI
+        SendNUIMessage({
+            action = 'hideRedzoneUI'
+        })
+
+        if Redzone.OnEnter and Redzone.OnEnter['Toggle Money/Map'] then
             Zen.Functions.NUI('showMoneyUI', {})
             DisplayRadar(true)
         end

@@ -239,3 +239,164 @@ lib.callback.register('illenium-appearance:server:getOutfits', function(source)
 
     return outfits
 end)
+
+-- Register player callback (for new players)
+lib.callback.register('fatal:registerPlayer', function(source, data)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    -- Validate data
+    if not data.firstName or not data.lastName or not data.birthday or not data.gender then
+        Zen.Functions.Notify(source, 'Please fill out all fields!', 'xmark', '#FF0000')
+        return false
+    end
+
+    -- Check for blacklisted words
+    local blacklistedWords = Zen.Config.Server.BlacklistedWords or {}
+    local fullName = string.lower(data.firstName .. ' ' .. data.lastName)
+
+    for _, word in pairs(blacklistedWords) do
+        if string.find(fullName, string.lower(word)) then
+            Zen.Functions.Notify(source, 'Name contains blacklisted word!', 'xmark', '#FF0000')
+            return false
+        end
+    end
+
+    -- Update database
+    local success = MySQL.update.await([[
+        UPDATE users SET firstname = ?, lastname = ?, dateofbirth = ?, sex = ?
+        WHERE identifier = ?
+    ]], { data.firstName, data.lastName, data.birthday, data.gender, xPlayer.identifier })
+
+    if success then
+        -- Update player state
+        local ply = Player(source)
+        ply.state:set('name', data.firstName .. ' ' .. data.lastName, true)
+
+        Zen.Functions.Notify(source, 'Registration successful!', 'check', '#00FF00')
+        Zen.Functions.Log('Player Registered', ('%s registered as %s %s'):format(xPlayer.identifier, data.firstName, data.lastName), 65280)
+        return true
+    end
+
+    Zen.Functions.Notify(source, 'Registration failed!', 'xmark', '#FF0000')
+    return false
+end)
+
+-- Deathscreen balance check
+lib.callback.register('deathscreen:checkBalance', function(source, price)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    local bankBalance = xPlayer.getAccount('bank').money
+    return bankBalance >= (price or 0)
+end)
+
+-- Vehicle shop buy callback
+lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, price, isDonor, label)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    -- Check if player has enough money
+    local bankBalance = xPlayer.getAccount('bank').money
+    if bankBalance < price then
+        Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#FF0000')
+        return false
+    end
+
+    -- Deduct money
+    xPlayer.removeAccountMoney('bank', price)
+
+    -- Insert vehicle into database
+    MySQL.insert.await([[
+        INSERT INTO owned_vehicles (owner, plate, vehicle, type, stored)
+        VALUES (?, ?, ?, ?, 1)
+    ]], { xPlayer.identifier, props.plate, json.encode(props), vehicleType or 'car' })
+
+    Zen.Functions.Notify(source, 'Vehicle purchased successfully!', 'car', '#00FF00')
+    Zen.Functions.Log('Vehicle Purchase', ('%s purchased %s for $%s'):format(xPlayer.getName(), label or 'vehicle', price), 65280)
+
+    return true
+end)
+
+-- Admin server callback
+lib.callback.register('admin:server:callback', function(source, action, data)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    -- Check admin permission
+    local group = xPlayer.getGroup()
+    if group ~= 'admin' and group ~= 'superadmin' then
+        return false
+    end
+
+    if action == 'getPlayers' then
+        local players = {}
+        for _, playerId in pairs(GetPlayers()) do
+            local target = ESX.GetPlayerFromId(tonumber(playerId))
+            if target then
+                players[#players + 1] = {
+                    id = tonumber(playerId),
+                    name = target.getName(),
+                    job = target.getJob().label
+                }
+            end
+        end
+        return players
+
+    elseif action == 'kick' then
+        if data.target then
+            DropPlayer(data.target, data.reason or 'Kicked by admin')
+            Zen.Functions.Log('Admin Kick', ('%s kicked player %s'):format(xPlayer.getName(), data.target), 16711680)
+            return true
+        end
+
+    elseif action == 'ban' then
+        if data.target then
+            local targetPlayer = ESX.GetPlayerFromId(data.target)
+            if targetPlayer then
+                local identifier = targetPlayer.identifier
+                MySQL.insert.await('INSERT INTO bans (identifier, reason, expire, banner) VALUES (?, ?, ?, ?)', {
+                    identifier, data.reason or 'Banned', data.duration or 0, xPlayer.identifier
+                })
+                DropPlayer(data.target, 'Banned: ' .. (data.reason or 'No reason given'))
+                Zen.Functions.Log('Admin Ban', ('%s banned %s'):format(xPlayer.getName(), targetPlayer.getName()), 16711680)
+                return true
+            end
+        end
+
+    elseif action == 'revive' then
+        if data.target then
+            TriggerClientEvent('deathscreen:revive', data.target)
+            Zen.Functions.Log('Admin Revive', ('%s revived player %s'):format(xPlayer.getName(), data.target), 65280)
+            return true
+        end
+
+    elseif action == 'teleport' then
+        if data.target and data.coords then
+            TriggerClientEvent('admin:teleport', data.target, data.coords)
+            return true
+        end
+
+    elseif action == 'giveMoney' then
+        if data.target and data.amount then
+            local target = ESX.GetPlayerFromId(data.target)
+            if target then
+                target.addMoney(data.amount)
+                Zen.Functions.Log('Admin Give Money', ('%s gave $%s to %s'):format(xPlayer.getName(), data.amount, target.getName()), 65280)
+                return true
+            end
+        end
+
+    elseif action == 'giveItem' then
+        if data.target and data.item and data.amount then
+            local target = ESX.GetPlayerFromId(data.target)
+            if target then
+                target.addInventoryItem(data.item, data.amount)
+                Zen.Functions.Log('Admin Give Item', ('%s gave %sx %s to %s'):format(xPlayer.getName(), data.amount, data.item, target.getName()), 65280)
+                return true
+            end
+        end
+    end
+
+    return false
+end)

@@ -1,12 +1,42 @@
 -- Key Drop Server-side Code
 
+-- Helper function to check key permission
+local function hasKeyPermission(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    -- Check if player is admin
+    local group = xPlayer.getGroup()
+    if group == 'admin' or group == 'superadmin' then
+        return true
+    end
+
+    return false
+end
+
+-- Helper function to check coin permission
+local function hasCoinPermission(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    -- Check if player is admin
+    local group = xPlayer.getGroup()
+    if group == 'admin' or group == 'superadmin' then
+        return true
+    end
+
+    return false
+end
+
 -- Schedule key drop
 RegisterNetEvent('keydrop:schedule', function(duration, keys, amount)
     local source = source
 
     -- Verify permission
-    local hasPermission = lib.callback.await('keydrop:hasKeyPermission', source)
-    if not hasPermission then return end
+    if not hasKeyPermission(source) then
+        Zen.Functions.Notify(source, 'No permission!', 'xmark', '#FF0000')
+        return
+    end
 
     duration = tonumber(duration) or 5
 
@@ -42,8 +72,10 @@ RegisterNetEvent('coindrop:schedule', function(duration, coinAmount)
     local source = source
 
     -- Verify permission
-    local hasPermission = lib.callback.await('keydrop:hasCoinPermission', source)
-    if not hasPermission then return end
+    if not hasCoinPermission(source) then
+        Zen.Functions.Notify(source, 'No permission!', 'xmark', '#FF0000')
+        return
+    end
 
     duration = tonumber(duration) or 5
     coinAmount = tonumber(coinAmount) or 1000

@@ -1,6 +1,15 @@
 local DeathScreen = Zen.Config.DeathScreen
 playerDead = false
 
+-- Key mappings for deathscreen buttons (E, F, G keys)
+local KeyMappings = {
+    ['E'] = 38,  -- INPUT_PICKUP / E key
+    ['F'] = 23,  -- INPUT_ENTER / F key
+    ['G'] = 47,  -- INPUT_DETONATE / G key
+    ['R'] = 45,  -- INPUT_RELOAD / R key
+    ['H'] = 74,  -- INPUT_VEH_HEADLIGHT / H key
+}
+
 CreateThread(function()
     Zen.Functions.NUI('updateButtons', { buttons = DeathScreen.Buttons })
 end)
@@ -153,28 +162,35 @@ end)
 
 RegisterNUICallback('respawnTimerFinished', function(_, callback)
     CreateThread(function()
-        while true do 
+        while playerDead do
             Wait(0)
-            if not playerDead then 
-                Zen.Functions.NUI('closeDeathScreen', {})
-                playerDead = false
-                break
-            end
-            for i = 1, #DeathScreen.Buttons do 
-                if Zen.Keys[DeathScreen.Buttons[i].key] == "R" then 
-                    ExecuteCommand('revive ' ..cache.ped)
-                    return callback('ok')
-                end
 
-                if IsControlPressed(0, Zen.Keys[DeathScreen.Buttons[i].key]) then
-                    local canPayAmount = lib.callback.await('deathscreen:checkBalance', false, DeathScreen.Buttons[i].price)
-                    if canPayAmount then 
-                        RespawnPlayerAt(DeathScreen.Buttons[i], true)
+            for i = 1, #DeathScreen.Buttons do
+                local button = DeathScreen.Buttons[i]
+                local keyCode = KeyMappings[button.key] or Zen.Keys[button.key] or 0
+
+                if keyCode > 0 and IsControlJustPressed(0, keyCode) then
+                    -- Check if player can afford the respawn
+                    local price = button.price or 0
+                    local canPay = true
+
+                    if price > 0 then
+                        canPay = lib.callback.await('deathscreen:checkBalance', false, price)
+                    end
+
+                    if canPay then
+                        -- Perform respawn
+                        RespawnPlayerAt(button, true)
+                        Zen.Functions.Notify('Respawning...', 'heart', '#00FF00')
                         break
+                    else
+                        Zen.Functions.Notify('Not enough money! Need $' .. price, 'dollar', '#FF0000')
                     end
                 end
             end
         end
+
+        Zen.Functions.NUI('closeDeathScreen', {})
     end)
 
     return callback('ok')
