@@ -3,7 +3,9 @@
 
 -- Get player data callback (used by police, takehostage, etc.)
 lib.callback.register('getPlayerData', function(source, targetId)
-    local xPlayer = ESX.GetPlayerFromId(targetId)
+    local esx = GetESX()
+    if not esx then return nil end
+    local xPlayer = esx.GetPlayerFromId(targetId)
     if not xPlayer then return nil end
 
     return {
@@ -24,7 +26,9 @@ end)
 
 -- Get player's vehicles from garage
 lib.callback.register('garages:get', function(source, job, vehicleType)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return {} end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return {} end
 
     local query = 'SELECT * FROM owned_vehicles WHERE owner = ?'
@@ -67,7 +71,7 @@ end)
 -- Discord role check callback
 lib.callback.register('discord:haveRole', function(source, roleId)
     -- If no Discord integration, return false
-    if not Zen.Config.Server.Discord or Zen.Config.Server.Discord.BotToken == '' then
+    if not Zen.Config or not Zen.Config.Server or not Zen.Config.Server.Discord or Zen.Config.Server.Discord.BotToken == '' then
         return false
     end
 
@@ -104,7 +108,7 @@ end)
 
 -- Get all Discord roles for player
 lib.callback.register('discord:roles', function(source)
-    if not Zen.Config.Server.Discord or Zen.Config.Server.Discord.BotToken == '' then
+    if not Zen.Config or not Zen.Config.Server or not Zen.Config.Server.Discord or Zen.Config.Server.Discord.BotToken == '' then
         return {}
     end
 
@@ -138,7 +142,9 @@ end)
 
 -- Donor check callback
 lib.callback.register('donor:check', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Check for donor item
@@ -148,7 +154,7 @@ lib.callback.register('donor:check', function(source)
     end
 
     -- Check Discord roles for donor status
-    if Zen.Config.Server.Discord and Zen.Config.Server.Discord.Roles.Donor then
+    if Zen.Config and Zen.Config.Server and Zen.Config.Server.Discord and Zen.Config.Server.Discord.Roles and Zen.Config.Server.Discord.Roles.Donor then
         for _, roleId in pairs(Zen.Config.Server.Discord.Roles.Donor) do
             if lib.callback.await('discord:haveRole', source, roleId) then
                 return true
@@ -161,16 +167,25 @@ end)
 
 -- Key drop permission check
 lib.callback.register('keydrop:hasKeyPermission', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then return false end
+    local esx = GetESX()
+    if not esx then
+        print('[Zen] keydrop:hasKeyPermission - ESX not ready')
+        return false
+    end
+    local xPlayer = esx.GetPlayerFromId(source)
+    if not xPlayer then
+        print('[Zen] keydrop:hasKeyPermission - Player not found: ' .. tostring(source))
+        return false
+    end
 
     -- Check if player is admin
-    if xPlayer.getGroup() == 'admin' or xPlayer.getGroup() == 'superadmin' then
+    local group = xPlayer.getGroup()
+    if group == 'admin' or group == 'superadmin' then
         return true
     end
 
     -- Check Discord roles
-    if Zen.Config.Server.Discord and Zen.Config.Server.Discord.Roles.KeyDrop then
+    if Zen.Config and Zen.Config.Server and Zen.Config.Server.Discord and Zen.Config.Server.Discord.Roles and Zen.Config.Server.Discord.Roles.KeyDrop then
         for _, roleId in pairs(Zen.Config.Server.Discord.Roles.KeyDrop) do
             local hasRole = lib.callback.await('discord:haveRole', source, roleId)
             if hasRole then return true end
@@ -182,16 +197,19 @@ end)
 
 -- Coin drop permission check
 lib.callback.register('keydrop:hasCoinPermission', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Check if player is admin
-    if xPlayer.getGroup() == 'admin' or xPlayer.getGroup() == 'superadmin' then
+    local group = xPlayer.getGroup()
+    if group == 'admin' or group == 'superadmin' then
         return true
     end
 
     -- Check Discord roles
-    if Zen.Config.Server.Discord and Zen.Config.Server.Discord.Roles.CoinDrop then
+    if Zen.Config and Zen.Config.Server and Zen.Config.Server.Discord and Zen.Config.Server.Discord.Roles and Zen.Config.Server.Discord.Roles.CoinDrop then
         for _, roleId in pairs(Zen.Config.Server.Discord.Roles.CoinDrop) do
             local hasRole = lib.callback.await('discord:haveRole', source, roleId)
             if hasRole then return true end
@@ -203,7 +221,9 @@ end)
 
 -- Steal outfit callback
 lib.callback.register('stableDev:server:getPlayerOutfit', function(source, targetId)
-    local xTarget = ESX.GetPlayerFromId(targetId)
+    local esx = GetESX()
+    if not esx then return nil end
+    local xTarget = esx.GetPlayerFromId(targetId)
     if not xTarget then return nil end
 
     -- Get the target player's current appearance/outfit
@@ -222,7 +242,9 @@ end)
 
 -- Illenium appearance outfits
 lib.callback.register('illenium-appearance:server:getOutfits', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return {} end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return {} end
 
     local result = MySQL.query.await('SELECT * FROM player_outfits WHERE identifier = ?', { xPlayer.identifier })
@@ -242,7 +264,9 @@ end)
 
 -- Register player callback (for new players)
 lib.callback.register('fatal:registerPlayer', function(source, data)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Validate data
@@ -252,7 +276,7 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
     end
 
     -- Check for blacklisted words
-    local blacklistedWords = Zen.Config.Server.BlacklistedWords or {}
+    local blacklistedWords = (Zen.Config and Zen.Config.Server and Zen.Config.Server.BlacklistedWords) or {}
     local fullName = string.lower(data.firstName .. ' ' .. data.lastName)
 
     for _, word in pairs(blacklistedWords) do
@@ -284,20 +308,30 @@ end)
 
 -- Deathscreen balance check
 lib.callback.register('deathscreen:checkBalance', function(source, price)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
-    local bankBalance = xPlayer.getAccount('bank').money
+    local bankAccount = xPlayer.getAccount('bank')
+    if not bankAccount then return false end
+
+    local bankBalance = bankAccount.money or 0
     return bankBalance >= (price or 0)
 end)
 
 -- Vehicle shop buy callback
 lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, price, isDonor, label)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Check if player has enough money
-    local bankBalance = xPlayer.getAccount('bank').money
+    local bankAccount = xPlayer.getAccount('bank')
+    if not bankAccount then return false end
+
+    local bankBalance = bankAccount.money or 0
     if bankBalance < price then
         Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#FF0000')
         return false
@@ -318,9 +352,32 @@ lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, pr
     return true
 end)
 
+-- Check if player is new (for registration)
+lib.callback.register('register:isNewPlayer', function(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
+    if not xPlayer then return false end
+
+    -- Check database for firstname
+    local result = MySQL.single.await('SELECT firstname FROM users WHERE identifier = ?', { xPlayer.identifier })
+
+    if result then
+        local firstName = result.firstname
+        if not firstName or firstName == '' or firstName == 'Unknown' or firstName == nil then
+            print('[Zen] Player ' .. source .. ' is new - showing registration')
+            return true
+        end
+    end
+
+    return false
+end)
+
 -- Admin server callback
 lib.callback.register('admin:server:callback', function(source, action, data)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Check admin permission
@@ -332,7 +389,7 @@ lib.callback.register('admin:server:callback', function(source, action, data)
     if action == 'getPlayers' then
         local players = {}
         for _, playerId in pairs(GetPlayers()) do
-            local target = ESX.GetPlayerFromId(tonumber(playerId))
+            local target = esx.GetPlayerFromId(tonumber(playerId))
             if target then
                 players[#players + 1] = {
                     id = tonumber(playerId),
@@ -352,7 +409,7 @@ lib.callback.register('admin:server:callback', function(source, action, data)
 
     elseif action == 'ban' then
         if data.target then
-            local targetPlayer = ESX.GetPlayerFromId(data.target)
+            local targetPlayer = esx.GetPlayerFromId(data.target)
             if targetPlayer then
                 local identifier = targetPlayer.identifier
                 MySQL.insert.await('INSERT INTO bans (identifier, reason, expire, banner) VALUES (?, ?, ?, ?)', {
@@ -379,7 +436,7 @@ lib.callback.register('admin:server:callback', function(source, action, data)
 
     elseif action == 'giveMoney' then
         if data.target and data.amount then
-            local target = ESX.GetPlayerFromId(data.target)
+            local target = esx.GetPlayerFromId(data.target)
             if target then
                 target.addMoney(data.amount)
                 Zen.Functions.Log('Admin Give Money', ('%s gave $%s to %s'):format(xPlayer.getName(), data.amount, target.getName()), 65280)
@@ -389,7 +446,7 @@ lib.callback.register('admin:server:callback', function(source, action, data)
 
     elseif action == 'giveItem' then
         if data.target and data.item and data.amount then
-            local target = ESX.GetPlayerFromId(data.target)
+            local target = esx.GetPlayerFromId(data.target)
             if target then
                 target.addInventoryItem(data.item, data.amount)
                 Zen.Functions.Log('Admin Give Item', ('%s gave %sx %s to %s'):format(xPlayer.getName(), data.amount, data.item, target.getName()), 65280)

@@ -269,8 +269,22 @@ AddEventHandler('esx:onPlayerDeath', function(data)
 end)
 
 RegisterNetEvent('deathscreen:revive', function(coords)
-    NetworkResurrectLocalPlayer((coords or cache.coords), true, true, false)
+    local spawnCoords = coords or cache.coords
+    local x, y, z, w = spawnCoords.x or spawnCoords[1], spawnCoords.y or spawnCoords[2], spawnCoords.z or spawnCoords[3], spawnCoords.w or 0.0
+
+    -- Ensure player is in valid state before reviving
+    DoScreenFadeOut(100)
+    Wait(200)
+
+    SetEntityCoordsNoOffset(cache.ped, x, y, z, false, false, false)
+    NetworkResurrectLocalPlayer(x, y, z, w, true, false)
     ClearPedBloodDamage(cache.ped)
+    SetEntityHealth(cache.ped, GetEntityMaxHealth(cache.ped))
+    ClearPedTasksImmediately(cache.ped)
+
+    Wait(200)
+    DoScreenFadeIn(500)
+
     TriggerServerEvent('esx:onPlayerSpawn')
     TriggerEvent('esx:onPlayerSpawn')
     TriggerEvent('playerSpawned')

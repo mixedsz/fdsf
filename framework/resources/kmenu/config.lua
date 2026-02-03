@@ -11,7 +11,6 @@ Zen.Config.KMenu = {
     Buttons = {
         Teleports = {
             ['Airport Teleports'] = {
-                -- { 'icon', 'label', coords }
                 { 'AP Hanger', vec4(-1085.8271, -3382.2192, 13.9450, 147.8603) },
                 { 'AP Bleachers', vec4(-987.9485, -3389.3000, 14.9449, 145.9897) },
                 { 'AP Gas', vec4(-1089.6533, -3483.9221, 14.1434, 236.7817) },
@@ -23,50 +22,45 @@ Zen.Config.KMenu = {
                 { 'AP EX Left', vec4(-1809.5565, -3142.8367, 14.3058, 147.5581) },
             },
             ['Skate Park'] = {
-                -- { 'icon', 'label', coords }
                 { 'Skate Park', vec4(-959.0424, -780.0302, 17.8361, 231.8172) },
             },
             ['Stables'] = {
-                -- { 'icon', 'label', coords }
                 { 'Ranch Stables', vec4(1456.3782, 1117.1167, 114.3338, 356.6016) },
             },
             ['Floater Ramps'] = {
-                -- { 'icon', 'label', coords }
                 { 'Floater 1', vec4(-3461.5, -2291.49, 158.26, 4.49) },
                 { 'Floater 2', vec4(-3462.9, -2361.28, 158.26, 177.68) },
                 { 'Floater 3', vec4(-3462.27, -2425.27, 158.26, 328.64) },
                 { 'Floater 4', vec3(-3462.28, -2491.28, 158.26) },
                 { 'Floater 5', vec4(-3462.56, -2558.53, 158.26, 201.18) },
             },
-            },
-            
         },
-        Weapons = {
-            ['weapon_appistol'] = { 
-                weapon = 'weapon_appistol', 
-                price = 50000 
-            },
-            ['weapon_combatpistol'] = { 
-                weapon = 'weapon_combatpistol', 
-                price = 30000 
-            },
+    },
+    Weapons = {
+        {
+            weapon = 'weapon_appistol',
+            price = 50000
         },
-
-        Items = {
-            ['armour'] = {
-                item = 'armour',
-                icon = 'shield',
-                price = 500
-            },
-            ['clip'] = {
-                item = 'clip',
-                icon = 'gun',
-                price = 500
-            },
-            ['medkit'] = {
-                item = 'medkit',
-                icon = 'suitcase-medical',
-                price = 500
-            },
-        }
+        {
+            weapon = 'weapon_combatpistol',
+            price = 30000
+        },
+    },
+    Items = {
+        {
+            item = 'armour',
+            icon = 'shield',
+            price = 500
+        },
+        {
+            item = 'clip',
+            icon = 'gun',
+            price = 500
+        },
+        {
+            item = 'medkit',
+            icon = 'suitcase-medical',
+            price = 500
+        },
     }
+}

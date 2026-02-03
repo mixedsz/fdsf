@@ -3,8 +3,39 @@ Zen.Functions = Zen.Functions or {}
 Zen.Players = {}
 Zen.CachedPlayers = {}
 
--- Get ESX object
-ESX = exports['es_extended']:getSharedObject()
+-- Get ESX object with proper initialization
+ESX = nil
+
+CreateThread(function()
+    -- Wait for ESX to be ready
+    while ESX == nil do
+        TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+        Wait(100)
+    end
+
+    -- Fallback to export if event doesn't work
+    if ESX == nil then
+        pcall(function()
+            ESX = exports['es_extended']:getSharedObject()
+        end)
+    end
+
+    if ESX then
+        print('[Zen] ESX initialized successfully on server')
+    else
+        print('[Zen] WARNING: ESX failed to initialize!')
+    end
+end)
+
+-- Helper to safely get ESX
+function GetESX()
+    if ESX == nil then
+        pcall(function()
+            ESX = exports['es_extended']:getSharedObject()
+        end)
+    end
+    return ESX
+end
 
 -- Player count tracking
 local playerCount = 0
@@ -23,7 +54,9 @@ end
 
 -- Utility function to get player data
 Zen.Functions.GetPlayerData = function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return nil end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return nil end
 
     return {
@@ -69,7 +102,9 @@ end
 -- Player loaded event handler
 RegisterNetEvent('playerLoaded', function(serverId)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
 
     if not xPlayer then return end
 

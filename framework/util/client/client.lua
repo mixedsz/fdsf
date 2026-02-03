@@ -27,16 +27,10 @@ playerCount = {
     max = Zen.Config.Server.MaxPlayers
 }
 
--- Check if player is new (no name set)
+-- Check if player is new (no name set) - uses server callback
 local function CheckNewPlayer()
-    local xPlayer = GetESX().GetPlayerData()
-    if xPlayer and xPlayer.firstName then
-        local firstName = xPlayer.firstName
-        if not firstName or firstName == '' or firstName == 'Unknown' then
-            return true
-        end
-    end
-    return false
+    local isNew = lib.callback.await('register:isNewPlayer', false)
+    return isNew
 end
 
 RegisterNetEvent('showNotification', function(text, icon, color)
