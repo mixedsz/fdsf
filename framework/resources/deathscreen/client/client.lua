@@ -36,6 +36,26 @@ local function DoRevive(x, y, z, w)
     SetPlayerInvincible(PlayerId(), false)
     ClearPlayerWantedLevel(PlayerId())
 
+    -- Clear ESX ambulancejob death screen effects (greyscale filter)
+    ClearTimecycleModifier()
+    ClearExtraTimecycleModifier()
+    SetTimecycleModifier('default')
+    SetTimecycleModifierStrength(1.0)
+    AnimpostfxStop('DeathFailOut')
+    AnimpostfxStop('DeathFailMPDark')
+    AnimpostfxStop('DeathFailMPIn')
+    AnimpostfxStop('PPFilter')
+    AnimpostfxStop('DrugsMichaelAliensFight')
+    AnimpostfxStop('DeathFailNeutralIn')
+    AnimpostfxStop('MP_death_grade_blend01')
+    AnimpostfxStop('FinaleCredits')
+    SetCamEffect(0)
+
+    -- Remove any lingering screen effects
+    if IsScreenFadedOut() or IsScreenFadingOut() then
+        DoScreenFadeIn(0)
+    end
+
     Wait(200)
     DoScreenFadeIn(500)
 
@@ -43,6 +63,14 @@ local function DoRevive(x, y, z, w)
     TriggerServerEvent('esx:onPlayerSpawn')
     TriggerEvent('esx:onPlayerSpawn')
     TriggerEvent('playerSpawned')
+
+    -- Clear timecycle again after events in case ambulancejob re-applied it
+    Wait(500)
+    ClearTimecycleModifier()
+    ClearExtraTimecycleModifier()
+    AnimpostfxStop('DeathFailOut')
+    AnimpostfxStop('DeathFailMPDark')
+    AnimpostfxStop('DeathFailMPIn')
 
     -- Close deathscreen UI
     Zen.Functions.NUI('closeDeathScreen', {})

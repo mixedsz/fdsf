@@ -1,5 +1,6 @@
 local Drugs = Zen.Config.Drugs
 local DrugsData = { Busy = false, Pressed = false }
+local textUIShown = false
 
 RegisterNetEvent('drugs:start', function(drugData, locData, task)
     DrugsData.Busy = true
@@ -46,23 +47,35 @@ RegisterNetEvent('playerLoaded', function()
                 function marker:onExit()
                     DrugsData.Busy = false
                     Cooldown = true
-                    lib.hideTextUI()
+                    if textUIShown then
+                        lib.hideTextUI()
+                        textUIShown = false
+                    end
                     SetTimeout(locData.Time * 1000, function() Cooldown = false end)
                 end
-                
+
                 function marker:nearby()
                     if not Cooldown then
-                        lib.showTextUI((DrugsData.Busy and 'Press [E] To Stop %sing %s' or 'Press [E] To Start %sing %s'):format(self.zone, drugData.Name))
-                
+                        if not textUIShown then
+                            lib.showTextUI((DrugsData.Busy and 'Press [E] To Stop %sing %s' or 'Press [E] To Start %sing %s'):format(self.zone, drugData.Name))
+                            textUIShown = true
+                        end
+
                         if IsControlJustPressed(0, 38) and not DrugsData.Pressed then
                             DrugsData.Pressed = true
-                
+
+                            -- Hide and re-show text UI with updated state after action
+                            if textUIShown then
+                                lib.hideTextUI()
+                                textUIShown = false
+                            end
+
                             if DrugsData.Busy then
                                 TriggerEvent('drugs:stop', drugData, self.zone)
                             else
                                 TriggerEvent('drugs:start', drugData, locData, self.zone)
                             end
-                
+
                             SetTimeout(locData.Time * 1000, function() DrugsData.Pressed = false end)
                         end
                     end

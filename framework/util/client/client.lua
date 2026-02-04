@@ -102,8 +102,35 @@ CreateThread(function()
     SetMapZoomDataLevel(3, 12.3, 0.9, 0.08, 0.0, 0.0)
     SetMapZoomDataLevel(4, 22.3, 0.9, 0.08, 0.0, 0.0)
     SetRadarZoom(1100)
-    UpdateTopRight()
     ToggleUIs(true)
+
+    -- Wait for ESX accounts to be fully loaded before updating HUD
+    local accountsReady = false
+    local retries = 0
+    while not accountsReady and retries < 30 do
+        local esx = GetESX()
+        local ply = esx and esx.GetPlayerData() or nil
+        if ply and ply.accounts and #ply.accounts > 0 then
+            -- Verify accounts actually have data
+            for i = 1, #ply.accounts do
+                if ply.accounts[i].name == 'money' or ply.accounts[i].name == 'bank' then
+                    accountsReady = true
+                    break
+                end
+            end
+        end
+        if not accountsReady then
+            Wait(500)
+            retries = retries + 1
+        end
+    end
+
+    UpdateTopRight()
+
+    -- Refresh HUD again after a short delay to catch late-loading data
+    Wait(3000)
+    UpdateTopRight()
+
 	while true do
     	Wait(0)
     if IsPedArmed(cache.ped, 6) then
@@ -202,6 +229,14 @@ Citizen.CreateThread(function()
                 DisableControlAction(1, 142, true)
         end
     end
+end)
+
+-- ESX fires this when player is fully loaded with all data
+RegisterNetEvent('esx:playerLoaded', function(xPlayer)
+    -- Full refresh of HUD with fresh ESX data
+    Wait(1000)
+    UpdateTopRight()
+    ToggleUIs(true)
 end)
 
 RegisterNetEvent('esx:setAccountMoney', function(account)
