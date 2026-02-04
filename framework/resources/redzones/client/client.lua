@@ -66,6 +66,7 @@ for i = 1, #Redzone.Zones do
     local point = lib.points.new(zone.coords, zone.radius * 2, { id = i, radius = zone.radius, coords = zone.coords })
 
     function point:onExit()
+        plyZone = false
         perform('exit', self.id)
     end
 
@@ -105,7 +106,7 @@ for i = 1, #Redzone.Zones do
 end
 
 RegisterNetEvent('redzones:kills', function(_kills, _headshot)
-    if _headshot then headshots += 1 end
+    if _headshot then headshots = headshots + 1 end
     kills = _kills
 
     SendNUIMessage({

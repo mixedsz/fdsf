@@ -1,8 +1,19 @@
 -- Key Drop Server-side Code
 
+local function getESX()
+    if not ESX then
+        pcall(function()
+            ESX = exports['es_extended']:getSharedObject()
+        end)
+    end
+    return ESX
+end
+
 -- Helper function to check key permission
 local function hasKeyPermission(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = getESX()
+    if not esx then return false end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Check if player is admin
@@ -16,7 +27,7 @@ end
 
 -- Helper function to check coin permission
 local function hasCoinPermission(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local xPlayer = getESX().GetPlayerFromId(source)
     if not xPlayer then return false end
 
     -- Check if player is admin
@@ -48,7 +59,7 @@ RegisterNetEvent('keydrop:schedule', function(duration, keys, amount)
 
         -- Select random player
         local winnerId = players[math.random(#players)]
-        local xWinner = ESX.GetPlayerFromId(winnerId)
+        local xWinner = getESX().GetPlayerFromId(winnerId)
 
         if xWinner then
             for _, keyName in pairs(keys) do
@@ -88,7 +99,7 @@ RegisterNetEvent('coindrop:schedule', function(duration, coinAmount)
 
         -- Select random player
         local winnerId = players[math.random(#players)]
-        local xWinner = ESX.GetPlayerFromId(winnerId)
+        local xWinner = getESX().GetPlayerFromId(winnerId)
 
         if xWinner then
             xWinner.addMoney(coinAmount)

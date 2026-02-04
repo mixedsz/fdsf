@@ -11,23 +11,24 @@ CREATE TABLE IF NOT EXISTS `gangs` (
     `label` VARCHAR(100) NOT NULL,
     `owner` VARCHAR(60) DEFAULT NULL,
     `bank` INT(11) DEFAULT 0,
+    `kills` INT(11) DEFAULT 0,
+    `turfs` INT(11) DEFAULT 0,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Create gang_members table if it doesn't exist
+-- Create gang_members table WITHOUT foreign key (avoids collation mismatch)
 CREATE TABLE IF NOT EXISTS `gang_members` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `identifier` VARCHAR(60) NOT NULL,
-    `gang` VARCHAR(50) NOT NULL,
+    `gang` VARCHAR(50) NOT NULL DEFAULT 'none',
     `rank` INT(11) DEFAULT 0,
     `rank_label` VARCHAR(50) DEFAULT 'Member',
     `joined_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `identifier` (`identifier`),
-    KEY `gang` (`gang`),
-    CONSTRAINT `fk_gang_members_gang` FOREIGN KEY (`gang`) REFERENCES `gangs` (`name`) ON DELETE CASCADE
+    KEY `gang` (`gang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Create bans table if it doesn't exist
@@ -65,10 +66,3 @@ ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `firstname` VARCHAR(50) DEFAULT NUL
 ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `lastname` VARCHAR(50) DEFAULT NULL;
 ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `dateofbirth` VARCHAR(20) DEFAULT NULL;
 ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `sex` VARCHAR(10) DEFAULT NULL;
-
--- Insert default gangs (optional - uncomment if needed)
--- INSERT IGNORE INTO `gangs` (`name`, `label`) VALUES
---     ('none', 'No Gang'),
---     ('ballas', 'Ballas'),
---     ('grove', 'Grove Street'),
---     ('vagos', 'Los Santos Vagos');

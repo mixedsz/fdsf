@@ -106,9 +106,9 @@ CreateThread(function()
     ToggleUIs(true)
 	while true do
     	Wait(0)
-    if IsPedArmed(ped, 6) then
+    if IsPedArmed(cache.ped, 6) then
         DisableControlAction(1, 140, true)
-              DisableControlAction(1, 141, true)
+        DisableControlAction(1, 141, true)
         DisableControlAction(1, 142, true)
     else
         Wait(1500)
@@ -209,8 +209,23 @@ RegisterNetEvent('esx:setAccountMoney', function(account)
     UpdateTopRight('accounts', value)
 end)
 
+-- ESX fires this event when cash (money) changes
+RegisterNetEvent('esx:setMoney', function(money)
+    local value = { name = 'money', money = money }
+    UpdateTopRight('accounts', value)
+end)
+
 RegisterNetEvent('esx:setJob', function(data)
     UpdateTopRight('job', data)
+end)
+
+-- Gang update from server
+RegisterNetEvent('gangs:set', function(gangData)
+    if gangData then
+        UpdateTopRight('gang', gangData)
+    else
+        UpdateTopRight('gang', { label = '', rank_label = '' })
+    end
 end)
 
 RegisterNetEvent('player:count', function(data)

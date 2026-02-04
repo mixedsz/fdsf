@@ -1,30 +1,58 @@
 -- Deathscreen Server-side Code
 
--- Check balance for revive
-lib.callback.register('deathscreen:checkBalance', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    if not xPlayer then return false end
+local function getESX()
+    if not ESX then
+        pcall(function()
+            ESX = exports['es_extended']:getSharedObject()
+        end)
+    end
+    return ESX
+end
 
-    -- Return player's bank balance
-    return xPlayer.getAccount('bank').money
-end)
-
--- Perform after death actions
-RegisterNetEvent('deathscreen:performAfterDeath', function(action, cost)
+-- Perform after death actions (money deduction + weapon giving)
+RegisterNetEvent('deathscreen:performAfterDeath', function(cost, weapon)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = getESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
-    if action == 'hospital' then
-        -- Check and deduct cost
-        if cost and cost > 0 then
-            local bankBalance = xPlayer.getAccount('bank').money
-            if bankBalance >= cost then
-                xPlayer.removeAccountMoney('bank', cost)
-                Zen.Functions.Notify(source, 'Hospital bill: $' .. cost, 'hospital', '#FF0000')
+    -- Deduct respawn cost from bank
+    if cost and cost > 0 then
+        local bankBalance = xPlayer.getAccount('bank').money
+        if bankBalance >= cost then
+            xPlayer.removeAccountMoney('bank', cost)
+            TriggerClientEvent('showNotification', source, 'Respawn cost: $' .. cost, 'dollar', '#FF0000')
+        else
+            -- Try cash if bank doesn't have enough
+            local cashBalance = xPlayer.getMoney()
+            if cashBalance >= cost then
+                xPlayer.removeMoney(cost)
+                TriggerClientEvent('showNotification', source, 'Respawn cost: $' .. cost, 'dollar', '#FF0000')
             end
         end
     end
+
+    -- Give weapon if specified
+    if weapon and weapon ~= '' then
+        xPlayer.addWeapon(weapon, 250)
+    end
+end)
+
+-- Revive player from server (admin command etc)
+RegisterNetEvent('deathscreen:adminRevive', function(targetId)
+    local source = source
+    local esx = getESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
+    if not xPlayer then return end
+
+    -- Check admin permission
+    local group = xPlayer.getGroup()
+    if group ~= 'admin' and group ~= 'superadmin' then return end
+
+    local target = targetId or source
+    TriggerClientEvent('deathscreen:revive', target)
 end)
 
 -- ESX on player spawn event relay

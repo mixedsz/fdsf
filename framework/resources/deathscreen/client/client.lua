@@ -1,7 +1,7 @@
 local DeathScreen = Zen.Config.DeathScreen
 playerDead = false
 
--- Key mappings for deathscreen buttons (E, F, G keys)
+-- Key mappings for deathscreen buttons
 local KeyMappings = {
     ['E'] = 38,  -- INPUT_PICKUP / E key
     ['F'] = 23,  -- INPUT_ENTER / F key
@@ -18,11 +18,43 @@ for i = 1, #DeathScreen.Hospitals.Locations do
     Zen.Functions.CreateBlip(DeathScreen.Hospitals.Locations[i], DeathScreen.Hospitals.Blip)
 end
 
+-- Core revive function that handles the actual ped resurrection
+local function DoRevive(x, y, z, w)
+    DoScreenFadeOut(100)
+    Wait(200)
+
+    local ped = PlayerPedId()
+
+    SetEntityCoordsNoOffset(ped, x, y, z, false, false, false)
+    NetworkResurrectLocalPlayer(x, y, z, w or 0.0, true, false)
+
+    -- Clear all death-related state
+    local newPed = PlayerPedId()
+    ClearPedBloodDamage(newPed)
+    SetEntityHealth(newPed, GetEntityMaxHealth(newPed))
+    ClearPedTasksImmediately(newPed)
+    SetPlayerInvincible(PlayerId(), false)
+    ClearPlayerWantedLevel(PlayerId())
+
+    Wait(200)
+    DoScreenFadeIn(500)
+
+    -- Trigger ESX spawn events (this is what esx_ambulancejob listens for)
+    TriggerServerEvent('esx:onPlayerSpawn')
+    TriggerEvent('esx:onPlayerSpawn')
+    TriggerEvent('playerSpawned')
+
+    -- Close deathscreen UI
+    Zen.Functions.NUI('closeDeathScreen', {})
+    playerDead = false
+    ToggleUIs(true)
+end
+
 RegisterNUICallback('checkingIfPlayersInZones', function(_, callback)
     CreateThread(function()
-        while true do 
+        while true do
             Wait(0)
-            if not playerDead then 
+            if not playerDead then
                 Zen.Functions.NUI('closeDeathScreen', {})
                 playerDead = false
                 ToggleUIs(true)
@@ -31,7 +63,7 @@ RegisterNUICallback('checkingIfPlayersInZones', function(_, callback)
 
             local zone = 0
             local zoneDistance = math.huge
-            
+
             for i = 1, #DeathScreen.ReviveZones do
                 local playerCoords = cache.coords
                 local distance = math.sqrt((playerCoords.x - DeathScreen.ReviveZones[i].coords[1])^2 + (playerCoords.y - DeathScreen.ReviveZones[i].coords[2])^2 + (playerCoords.z - DeathScreen.ReviveZones[i].coords[3])^2)
@@ -43,17 +75,11 @@ RegisterNUICallback('checkingIfPlayersInZones', function(_, callback)
             end
 
             if zone ~= 0 then
-                if playerDead then 
+                if playerDead then
                     Zen.Functions.NUI('showDeathScreenZones', { inZone = true })
 
-                    if IsControlPressed(0, 45) then
-                        SetEntityCoordsNoOffset(cache.ped, cache.coords.x, cache.coords.y, cache.coords.z, false, false, false)
-                        NetworkResurrectLocalPlayer(cache.coords.x, cache.coords.y, cache.coords.z, cache.coords.w or 0.0, true, false)
-                        ClearPedBloodDamage(cache.ped)
-                        TriggerEvent('playerSpawned')
-                        Zen.Functions.NUI('closeDeathScreen', {})
-                        ToggleUIs(true)
-                        playerDead = false
+                    if IsControlPressed(0, 45) then -- R key
+                        DoRevive(cache.coords.x, cache.coords.y, cache.coords.z, cache.coords.w or 0.0)
                         break
                     end
                 end
@@ -76,7 +102,7 @@ function isNearRampZone(type)
         local zoneCoords = DeathScreen.ReviveZones[i].coords
         local zoneName = DeathScreen.ReviveZones[i].label
         local distance = math.sqrt((playerCoords.x - zoneCoords[1])^2 + (playerCoords.y - zoneCoords[2])^2 + (playerCoords.z - zoneCoords[3])^2)
-        
+
         if distance <= DeathScreen.ReviveZones[i].distance and distance < zoneDistances then
             zones = i
             zoneDistances = distance
@@ -88,7 +114,7 @@ function isNearRampZone(type)
         if notifyActive then return end
         return true
     else
-        if type == "combatheals" then 
+        if type == "combatheals" then
             Zen.Functions.Notify('You are not near a wager zone', 'xmark', '#FB010F')
             return false
         end
@@ -113,7 +139,7 @@ end)
 RegisterCommand('r', function()
     if isNearRampZone("combatheals") then
         if IsEntityDead(PlayerPedId()) then
-            TriggerEvent('deathscreen:revive', source)
+            TriggerEvent('deathscreen:revive')
         else
             Zen.Functions.Notify('You cannot do this while alive.', 'xmark', '#FB010F')
             return end
@@ -135,7 +161,7 @@ RegisterCommand('a', function()
             Zen.Functions.Notify('Your armour has been replenished', 'shield', '#FB010F')
             Wait(5000)
             armorCooldown = false
-        end    
+        end
     end
 end)
 
@@ -156,7 +182,7 @@ RegisterCommand('h', function()
             healthCooldown = false
         else
             Zen.Functions.Notify('Your health is already full.', 'xmark', '#FB010F')
-        end   
+        end
     end
 end)
 
@@ -167,25 +193,12 @@ RegisterNUICallback('respawnTimerFinished', function(_, callback)
 
             for i = 1, #DeathScreen.Buttons do
                 local button = DeathScreen.Buttons[i]
-                local keyCode = KeyMappings[button.key] or Zen.Keys[button.key] or 0
+                local keyCode = KeyMappings[button.key] or 0
 
                 if keyCode > 0 and IsControlJustPressed(0, keyCode) then
-                    -- Check if player can afford the respawn
-                    local price = button.price or 0
-                    local canPay = true
-
-                    if price > 0 then
-                        canPay = lib.callback.await('deathscreen:checkBalance', false, price)
-                    end
-
-                    if canPay then
-                        -- Perform respawn
-                        RespawnPlayerAt(button, true)
-                        Zen.Functions.Notify('Respawning...', 'heart', '#00FF00')
-                        break
-                    else
-                        Zen.Functions.Notify('Not enough money! Need $' .. price, 'dollar', '#FF0000')
-                    end
+                    -- Perform respawn - server will handle money deduction
+                    RespawnPlayerAt(button, true)
+                    break
                 end
             end
         end
@@ -211,20 +224,20 @@ function RespawnPlayerAt(data, atPD)
         coords = DeathScreen.PoliceStation
     end
 
-    SetEntityCoordsNoOffset(cache.ped, coords.x, coords.y, coords.z, false, false, false)
-    NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, coords.w, true, false)
-    ClearPedBloodDamage(cache.ped)
-    TriggerEvent('playerSpawned')
+    local x, y, z, w = coords.x, coords.y, coords.z, coords.w or 0.0
 
-    TriggerServerEvent('deathscreen:performAfterDeath', {
-        coords = coords,
-        weapon = data.weapon,
-        atPD = atPD
-    })
+    -- Tell server to handle money deduction and weapon giving
+    TriggerServerEvent('deathscreen:performAfterDeath', data.price or 0, data.weapon)
 
-    Zen.Functions.NUI('closeDeathScreen', {})
-    ToggleUIs(true)
-    playerDead = false
+    -- Revive the player using ESX-compatible revive
+    DoRevive(x, y, z, w)
+
+    -- Give weapon after revive if button has one
+    if data.weapon then
+        Wait(500)
+        local weaponHash = GetHashKey(data.weapon)
+        GiveWeaponToPed(PlayerPedId(), weaponHash, 250, false, true)
+    end
 end
 
 AddEventHandler('esx:onPlayerDeath', function(data)
@@ -234,24 +247,24 @@ AddEventHandler('esx:onPlayerDeath', function(data)
 
     ToggleUIs(false)
 
-    if deathCause == -460377800 then 
+    if deathCause == -460377800 then
         weaponlabel = "AR15 Black"
-    elseif deathCause == -497203000 then 
+    elseif deathCause == -497203000 then
         weaponlabel = "AR15 Purple"
-    elseif deathCause == -623131688 then 
+    elseif deathCause == -623131688 then
         weaponlabel = "AR15 Blue"
-    elseif deathCause == -1925800258 then 
+    elseif deathCause == -1925800258 then
         weaponlabel = "AR15 White"
-    elseif deathCause == -1736273989 then 
+    elseif deathCause == -1736273989 then
         weaponlabel = "AR15 Yellow"
-    elseif deathCause == 1942841862 then 
+    elseif deathCause == 1942841862 then
         weaponlabel = "AR15 Orange"
-    elseif deathCause == -887961548 then 
+    elseif deathCause == -887961548 then
         weaponlabel = "AR15 Green"
-    else 
+    else
         weaponlabel = Zen.Weapons[weaponskilledby]
     end
-    
+
     if data.killedByPlayer then
         deathReason = GetPlayerName(GetPlayerFromServerId(data.killerServerId))..' ('..data.killerServerId..')'
     elseif not data.killedByPlayer then
@@ -260,43 +273,44 @@ AddEventHandler('esx:onPlayerDeath', function(data)
 
     playerDead = true
 
+    -- Always send the config buttons (E, F, G) - ramp zones use R key separately
     Zen.Functions.NUI('showDeathScreen', {
         reason = deathReason,
         buttons = isNearRampZone("") and {{ label = "Revive Player", price = 0, key = "R" }} or DeathScreen.Buttons,
-        respawnTimer = (DeathScreen.OnDeath.RespawnTime / 1000), 
+        respawnTimer = (DeathScreen.OnDeath.RespawnTime / 1000),
         bleedOutTimer = (DeathScreen.OnDeath.BleedoutTime / 1000)
     })
 end)
 
+-- Revive event - used by redzones, admin revive, /r command, esx_ambulancejob
 RegisterNetEvent('deathscreen:revive', function(coords)
     local spawnCoords = coords or cache.coords
-    local x, y, z, w = spawnCoords.x or spawnCoords[1], spawnCoords.y or spawnCoords[2], spawnCoords.z or spawnCoords[3], spawnCoords.w or 0.0
+    local x, y, z, w
 
-    -- Ensure player is in valid state before reviving
-    DoScreenFadeOut(100)
-    Wait(200)
+    -- Handle different coordinate formats
+    if type(spawnCoords) == 'vector4' then
+        x, y, z, w = spawnCoords.x, spawnCoords.y, spawnCoords.z, spawnCoords.w
+    elseif type(spawnCoords) == 'vector3' then
+        x, y, z, w = spawnCoords.x, spawnCoords.y, spawnCoords.z, 0.0
+    elseif type(spawnCoords) == 'table' then
+        x = spawnCoords.x or spawnCoords[1] or cache.coords.x
+        y = spawnCoords.y or spawnCoords[2] or cache.coords.y
+        z = spawnCoords.z or spawnCoords[3] or cache.coords.z
+        w = spawnCoords.w or spawnCoords[4] or 0.0
+    else
+        x, y, z, w = cache.coords.x, cache.coords.y, cache.coords.z, 0.0
+    end
 
-    SetEntityCoordsNoOffset(cache.ped, x, y, z, false, false, false)
-    NetworkResurrectLocalPlayer(x, y, z, w, true, false)
-    ClearPedBloodDamage(cache.ped)
-    SetEntityHealth(cache.ped, GetEntityMaxHealth(cache.ped))
-    ClearPedTasksImmediately(cache.ped)
+    DoRevive(x, y, z, w)
+end)
 
-    Wait(200)
-    DoScreenFadeIn(500)
-
-    TriggerServerEvent('esx:onPlayerSpawn')
-    TriggerEvent('esx:onPlayerSpawn')
-    TriggerEvent('playerSpawned')
-
-    Zen.Functions.NUI('closeDeathScreen', {})
-    playerDead = false
-
-    ToggleUIs(true)
+-- Also listen for esx_ambulancejob revive events
+AddEventHandler('esx_ambulancejob:revive', function()
+    DoRevive(cache.coords.x, cache.coords.y, cache.coords.z, 0.0)
 end)
 
 RegisterCommand('die', function()
-    if not Zen.Functions.CanInteract() then 
+    if not Zen.Functions.CanInteract() then
         return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#FB010F')
     end
 

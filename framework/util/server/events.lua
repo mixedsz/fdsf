@@ -4,7 +4,9 @@
 -- Gangs player loaded event
 RegisterNetEvent('gangs:playerLoaded', function()
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     -- Get player's gang from database
@@ -39,7 +41,9 @@ end)
 -- Add weapon to inventory
 RegisterNetEvent('addWeaponToInventory', function(weapon, ammo)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     xPlayer.addWeapon(weapon, ammo or 100)
@@ -49,7 +53,9 @@ end)
 -- Usable item remove
 RegisterNetEvent('usable:remove', function(item, count)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     count = count or 1
@@ -59,11 +65,21 @@ end)
 -- Shop purchase event
 RegisterNetEvent('shop:purchase', function(item, amount, shopType)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
-    -- Get item price from config or database
+    -- Get item price from KMenu config
     local price = 0
+    if Zen.Config and Zen.Config.KMenu and Zen.Config.KMenu.Items then
+        for _, v in pairs(Zen.Config.KMenu.Items) do
+            if v.item == item then
+                price = v.price * (amount or 1)
+                break
+            end
+        end
+    end
 
     -- Add item to player inventory
     if xPlayer.canCarryItem(item, amount) then
@@ -82,7 +98,9 @@ end)
 -- Gun store purchase event
 RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     -- Verify player job if required
@@ -90,8 +108,16 @@ RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
         return Zen.Functions.Notify(source, 'Access denied!', 'xmark', '#FF0000')
     end
 
-    -- Get weapon price from config
-    local price = 0 -- Would be from config
+    -- Get weapon price from KMenu config
+    local price = 0
+    if Zen.Config and Zen.Config.KMenu and Zen.Config.KMenu.Weapons then
+        for _, v in pairs(Zen.Config.KMenu.Weapons) do
+            if v.weapon == weapon then
+                price = v.price
+                break
+            end
+        end
+    end
 
     if paymentType == 'money' then
         if xPlayer.getMoney() >= price then
@@ -99,10 +125,11 @@ RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
             xPlayer.addWeapon(weapon, 100)
             Zen.Functions.Notify(source, 'Weapon purchased!', 'gun', '#00FF00')
         else
-            Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Not enough money! Need $' .. price, 'dollar', '#FF0000')
         end
     elseif paymentType == 'bank' then
-        if xPlayer.getAccount('bank').money >= price then
+        local bankAccount = xPlayer.getAccount('bank')
+        if bankAccount and bankAccount.money >= price then
             xPlayer.removeAccountMoney('bank', price)
             xPlayer.addWeapon(weapon, 100)
             Zen.Functions.Notify(source, 'Weapon purchased!', 'gun', '#00FF00')
@@ -115,7 +142,9 @@ end)
 -- ESX Society deposit money
 RegisterNetEvent('esx_society:depositMoney', function(society, amount)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     if amount <= 0 then return end
@@ -143,7 +172,9 @@ end)
 -- ESX Society withdraw money
 RegisterNetEvent('esx_society:withdrawMoney', function(society, amount)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     if amount <= 0 then return end
@@ -162,12 +193,15 @@ end)
 -- ESX Society wash money
 RegisterNetEvent('esx_society:washMoney', function(society, amount)
     local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local esx = GetESX()
+    if not esx then return end
+    local xPlayer = esx.GetPlayerFromId(source)
     if not xPlayer then return end
 
     if amount <= 0 then return end
 
-    local dirtyMoney = xPlayer.getAccount('black_money').money
+    local dirtyAccount = xPlayer.getAccount('black_money')
+    local dirtyMoney = dirtyAccount and dirtyAccount.money or 0
     if dirtyMoney >= amount then
         xPlayer.removeAccountMoney('black_money', amount)
 
