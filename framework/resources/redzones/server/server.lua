@@ -42,7 +42,7 @@ RegisterNetEvent('redzones:action', function(action, zoneId)
                     local reward = kills * (zoneData and zoneData.reward or 500)
 
                     xPlayer.addAccountMoney('black_money', reward)
-                    Zen.Functions.Notify(source, 'You earned $' .. reward .. ' for ' .. kills .. ' kills!', 'dollar', '#00FF00')
+                    Zen.Functions.Notify(source, 'You earned $' .. reward .. ' for ' .. kills .. ' kills!', 'dollar', '#0EA5E9')
                 end
             end
         end

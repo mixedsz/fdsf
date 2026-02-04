@@ -69,7 +69,7 @@ RegisterNetEvent('gangs:changeGrade', function(newGrade, targetIdentifier, targe
     -- Verify player has permission (leader)
     local gangData = gangs[playerGang]
     if not gangData or not gangData.ranks[playerRank] or not gangData.ranks[playerRank].leader then
-        return Zen.Functions.Notify(source, 'You don\'t have permission!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'You don\'t have permission!', 'xmark', '#EC4899')
     end
 
     -- Update member grade
@@ -88,10 +88,10 @@ RegisterNetEvent('gangs:changeGrade', function(newGrade, targetIdentifier, targe
             rank_label = gangData.ranks[newGrade] and gangData.ranks[newGrade].label or 'Member'
         })
 
-        Zen.Functions.Notify(targetSource, 'Your rank has been changed!', 'ranking-star', '#00FF00')
+        Zen.Functions.Notify(targetSource, 'Your rank has been changed!', 'ranking-star', '#0EA5E9')
     end
 
-    Zen.Functions.Notify(source, 'Changed ' .. targetName .. '\'s rank!', 'check', '#00FF00')
+    Zen.Functions.Notify(source, 'Changed ' .. targetName .. '\'s rank!', 'check', '#0EA5E9')
 end)
 
 -- Kick gang member
@@ -108,7 +108,7 @@ RegisterNetEvent('gangs:kick', function(targetIdentifier, targetName)
     -- Verify player has permission (leader)
     local gangData = gangs[playerGang]
     if not gangData or not gangData.ranks[playerRank] or not gangData.ranks[playerRank].leader then
-        return Zen.Functions.Notify(source, 'You don\'t have permission!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'You don\'t have permission!', 'xmark', '#EC4899')
     end
 
     -- Remove member from gang
@@ -124,10 +124,10 @@ RegisterNetEvent('gangs:kick', function(targetIdentifier, targetName)
         ply.state:set('gang_rank', nil, true)
 
         TriggerClientEvent('gangs:set', targetSource, nil)
-        Zen.Functions.Notify(targetSource, 'You have been kicked from the gang!', 'xmark', '#FF0000')
+        Zen.Functions.Notify(targetSource, 'You have been kicked from the gang!', 'xmark', '#EC4899')
     end
 
-    Zen.Functions.Notify(source, 'Kicked ' .. targetName .. ' from the gang!', 'check', '#00FF00')
+    Zen.Functions.Notify(source, 'Kicked ' .. targetName .. ' from the gang!', 'check', '#0EA5E9')
 end)
 
 -- Add new gang member
@@ -137,7 +137,7 @@ RegisterNetEvent('gangs:addNewMember', function(targetId)
     local xTarget = ESX.GetPlayerFromId(targetId)
 
     if not xPlayer or not xTarget then
-        return Zen.Functions.Notify(source, 'Player not found!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Player not found!', 'xmark', '#EC4899')
     end
 
     local playerGang = Player(source).state.gang
@@ -148,13 +148,13 @@ RegisterNetEvent('gangs:addNewMember', function(targetId)
     -- Verify player has permission (leader)
     local gangData = gangs[playerGang]
     if not gangData or not gangData.ranks[playerRank] or not gangData.ranks[playerRank].leader then
-        return Zen.Functions.Notify(source, 'You don\'t have permission!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'You don\'t have permission!', 'xmark', '#EC4899')
     end
 
     -- Check if target is already in a gang
     local targetGang = Player(targetId).state.gang
     if targetGang then
-        return Zen.Functions.Notify(source, 'Player is already in a gang!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Player is already in a gang!', 'xmark', '#EC4899')
     end
 
     -- Add member to gang
@@ -174,8 +174,8 @@ RegisterNetEvent('gangs:addNewMember', function(targetId)
 
     TriggerClientEvent('gangs:loadedPlayer', targetId)
 
-    Zen.Functions.Notify(source, 'Added player to the gang!', 'check', '#00FF00')
-    Zen.Functions.Notify(targetId, 'You have been added to ' .. gangData.name .. '!', 'users', '#00FF00')
+    Zen.Functions.Notify(source, 'Added player to the gang!', 'check', '#0EA5E9')
+    Zen.Functions.Notify(targetId, 'You have been added to ' .. gangData.name .. '!', 'users', '#0EA5E9')
 end)
 
 -- Gang kills tracking
@@ -212,28 +212,28 @@ RegisterNetEvent('gangs:storages:withdraw', function(gangName, data)
     if data.type == 'account' then
         local accountBalance = accounts[data.item] or 0
         if accountBalance < data.withdrawed then
-            return Zen.Functions.Notify(source, 'Not enough funds!', 'dollar', '#FF0000')
+            return Zen.Functions.Notify(source, 'Not enough funds!', 'dollar', '#EC4899')
         end
 
         accounts[data.item] = accountBalance - data.withdrawed
         xPlayer.addAccountMoney(data.item, data.withdrawed)
 
-        Zen.Functions.Notify(source, 'Withdrew $' .. data.withdrawed, 'dollar', '#00FF00')
+        Zen.Functions.Notify(source, 'Withdrew $' .. data.withdrawed, 'dollar', '#0EA5E9')
     elseif data.type == 'item' then
         local itemCount = items[data.item] or 0
         if itemCount < data.withdrawed then
-            return Zen.Functions.Notify(source, 'Not enough items!', 'box', '#FF0000')
+            return Zen.Functions.Notify(source, 'Not enough items!', 'box', '#EC4899')
         end
 
         if not xPlayer.canCarryItem(data.item, data.withdrawed) then
-            return Zen.Functions.Notify(source, 'Inventory full!', 'box', '#FF0000')
+            return Zen.Functions.Notify(source, 'Inventory full!', 'box', '#EC4899')
         end
 
         items[data.item] = itemCount - data.withdrawed
         if items[data.item] <= 0 then items[data.item] = nil end
         xPlayer.addInventoryItem(data.item, data.withdrawed)
 
-        Zen.Functions.Notify(source, 'Took ' .. data.withdrawed .. 'x items', 'box', '#00FF00')
+        Zen.Functions.Notify(source, 'Took ' .. data.withdrawed .. 'x items', 'box', '#0EA5E9')
     end
 
     MySQL.update.await('UPDATE gang_storages SET accounts = ?, items = ? WHERE gang = ?', {
@@ -259,23 +259,23 @@ RegisterNetEvent('gangs:storages:deposit', function(gangName, data)
     if data.type == 'account' then
         local playerBalance = xPlayer.getAccount(data.item).money
         if playerBalance < data.deposited then
-            return Zen.Functions.Notify(source, 'Not enough funds!', 'dollar', '#FF0000')
+            return Zen.Functions.Notify(source, 'Not enough funds!', 'dollar', '#EC4899')
         end
 
         accounts[data.item] = (accounts[data.item] or 0) + data.deposited
         xPlayer.removeAccountMoney(data.item, data.deposited)
 
-        Zen.Functions.Notify(source, 'Deposited $' .. data.deposited, 'dollar', '#00FF00')
+        Zen.Functions.Notify(source, 'Deposited $' .. data.deposited, 'dollar', '#0EA5E9')
     elseif data.type == 'item' then
         local playerItem = xPlayer.getInventoryItem(data.item)
         if not playerItem or playerItem.count < data.deposited then
-            return Zen.Functions.Notify(source, 'Not enough items!', 'box', '#FF0000')
+            return Zen.Functions.Notify(source, 'Not enough items!', 'box', '#EC4899')
         end
 
         items[data.item] = (items[data.item] or 0) + data.deposited
         xPlayer.removeInventoryItem(data.item, data.deposited)
 
-        Zen.Functions.Notify(source, 'Deposited ' .. data.deposited .. 'x items', 'box', '#00FF00')
+        Zen.Functions.Notify(source, 'Deposited ' .. data.deposited .. 'x items', 'box', '#0EA5E9')
     end
 
     MySQL.update.await('UPDATE gang_storages SET accounts = ?, items = ? WHERE gang = ?', {
@@ -289,14 +289,14 @@ RegisterNetEvent('turfs:start', function(turfId)
     local playerGang = Player(source).state.gang
 
     if not playerGang then
-        return Zen.Functions.Notify(source, 'You must be in a gang!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'You must be in a gang!', 'xmark', '#EC4899')
     end
 
     local turfData = turfs[turfId]
     if not turfData then return end
 
     if turfData.initiated or turfData.started then
-        return Zen.Functions.Notify(source, 'This turf is already active!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'This turf is already active!', 'xmark', '#EC4899')
     end
 
     -- Mark turf as initiated
@@ -315,10 +315,10 @@ RegisterNetEvent('turfs:start', function(turfId)
         TriggerClientEvent('turfs:change', -1, turfs)
         TriggerClientEvent('turfs:started', -1, turfId)
 
-        Zen.Functions.NotifyAll('Turf war has started at ' .. turfData.name .. '!', 'skull-crossbones', '#FF0000')
+        Zen.Functions.NotifyAll('Turf war has started at ' .. turfData.name .. '!', 'skull-crossbones', '#EC4899')
     end)
 
-    Zen.Functions.Notify(source, 'Starting turf war...', 'skull-crossbones', '#FF0000')
+    Zen.Functions.Notify(source, 'Starting turf war...', 'skull-crossbones', '#EC4899')
 end)
 
 -- Turf action (enter/exit)
@@ -427,7 +427,7 @@ RegisterCommand('setgang', function(source, args, rawCommand)
 
     local xTarget = ESX.GetPlayerFromId(targetId)
     if not xTarget then
-        return Zen.Functions.Notify(source, 'Player not found!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Player not found!', 'xmark', '#EC4899')
     end
 
     -- Remove from old gang
@@ -459,6 +459,6 @@ RegisterCommand('setgang', function(source, args, rawCommand)
     TriggerClientEvent('gangs:loadedPlayer', targetId)
 
     if source ~= 0 then
-        Zen.Functions.Notify(source, 'Updated player gang!', 'check', '#00FF00')
+        Zen.Functions.Notify(source, 'Updated player gang!', 'check', '#0EA5E9')
     end
 end, false)

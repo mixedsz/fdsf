@@ -1,6 +1,6 @@
 Zen.Config.Server = {
     ServerName = 'Rage RP',
-    DiscordInvite = 'https://discord.gg/ragerp',
+    DiscordInvite = 'https://discord.gg/bDU43jPvzy',
     WebsiteLink = 'https://ragerp.tebex.io',
 
     MaxPlayers = 128,
@@ -13,6 +13,6 @@ Zen.Config.Server = {
     },
 
     Colors = {
-        ServerColor = "#bb0003"
+        ServerColor = "#0EA5E9"
     },
 }

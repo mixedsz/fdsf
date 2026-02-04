@@ -146,7 +146,7 @@ RegisterCommand('unban', function(source, args, rawCommand)
         MySQL.query.await('DELETE FROM bans WHERE identifier LIKE ?', { '%' .. identifier .. '%' })
 
         if source ~= 0 then
-            Zen.Functions.Notify(source, 'Player unbanned!', 'check', '#00FF00')
+            Zen.Functions.Notify(source, 'Player unbanned!', 'check', '#0EA5E9')
         end
 
         Zen.Functions.Log('Admin Unban', ('%s unbanned %s'):format(
@@ -169,7 +169,7 @@ RegisterCommand('goto', function(source, args, rawCommand)
         if xTarget then
             local coords = xTarget.getCoords()
             xPlayer.setCoords(coords.x, coords.y, coords.z)
-            Zen.Functions.Notify(source, 'Teleported to player!', 'location-dot', '#00FF00')
+            Zen.Functions.Notify(source, 'Teleported to player!', 'location-dot', '#0EA5E9')
         end
     end
 end, false)
@@ -187,7 +187,7 @@ RegisterCommand('bring', function(source, args, rawCommand)
         if xTarget then
             local coords = xPlayer.getCoords()
             xTarget.setCoords(coords.x, coords.y, coords.z)
-            Zen.Functions.Notify(source, 'Brought player to you!', 'location-dot', '#00FF00')
+            Zen.Functions.Notify(source, 'Brought player to you!', 'location-dot', '#0EA5E9')
             Zen.Functions.Notify(targetId, 'You were teleported by an admin!', 'location-dot', '#FFFF00')
         end
     end
@@ -205,7 +205,7 @@ RegisterCommand('freeze', function(source, args, rawCommand)
 
     if targetId then
         TriggerClientEvent('admin:freeze', targetId, freeze)
-        Zen.Functions.Notify(source, freeze and 'Player frozen!' or 'Player unfrozen!', 'snowflake', '#00FF00')
+        Zen.Functions.Notify(source, freeze and 'Player frozen!' or 'Player unfrozen!', 'snowflake', '#0EA5E9')
     end
 end, false)
 
@@ -219,7 +219,7 @@ RegisterCommand('revive', function(source, args, rawCommand)
     local targetId = tonumber(args[1]) or source
 
     TriggerClientEvent('deathscreen:revive', targetId)
-    Zen.Functions.Notify(source, 'Player revived!', 'heart-pulse', '#00FF00')
+    Zen.Functions.Notify(source, 'Player revived!', 'heart-pulse', '#0EA5E9')
 end, false)
 
 RegisterCommand('car', function(source, args, rawCommand)
@@ -247,7 +247,7 @@ RegisterCommand('entitywipe', function(source, args, rawCommand)
     TriggerClientEvent('admin:entitywipe', -1, wipeType)
 
     if source ~= 0 then
-        Zen.Functions.Notify(source, 'Entities wiped!', 'broom', '#00FF00')
+        Zen.Functions.Notify(source, 'Entities wiped!', 'broom', '#0EA5E9')
     end
 end, false)
 
@@ -270,7 +270,7 @@ RegisterCommand('offlineban', function(source, args, rawCommand)
         })
 
         if source ~= 0 then
-            Zen.Functions.Notify(source, 'Player banned!', 'ban', '#00FF00')
+            Zen.Functions.Notify(source, 'Player banned!', 'ban', '#0EA5E9')
         end
 
         Zen.Functions.Log('Admin Offline Ban', ('%s offline banned %s - %s'):format(

@@ -15,7 +15,7 @@ RegisterNetEvent('stealoutfit:steal', function(targetId)
 
     if outfit then
         TriggerClientEvent('stealoutfit:apply', source, outfit)
-        Zen.Functions.Notify(source, 'Outfit stolen!', 'shirt', '#00FF00')
-        Zen.Functions.Notify(targetId, 'Someone stole your outfit!', 'shirt', '#FF0000')
+        Zen.Functions.Notify(source, 'Outfit stolen!', 'shirt', '#0EA5E9')
+        Zen.Functions.Notify(targetId, 'Someone stole your outfit!', 'shirt', '#EC4899')
     end
 end)

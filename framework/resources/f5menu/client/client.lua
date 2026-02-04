@@ -240,11 +240,11 @@ lib.registerMenu({
                         SetModelAsNoLongerNeeded(ped)
                     end
                 else
-                    Zen.Functions.Notify('Cannot Switch Peds While You Are Dead!!', 'user', '#FF0000')
+                    Zen.Functions.Notify('Cannot Switch Peds While You Are Dead!!', 'user', '#EC4899')
                 end
             end
         else
-            Zen.Functions.Notify('You Do Not Have Access To This Ped!', 'x', '#FF0000')
+            Zen.Functions.Notify('You Do Not Have Access To This Ped!', 'x', '#EC4899')
             lib.hideMenu()
         end
     elseif args.action then 

@@ -148,7 +148,7 @@ RegisterCommand('gunplug', function()
         if hasRole then
             lib.showMenu('gunPurchaseMenu') 
         else
-            Zen.Functions.Notify('You don\'t have access to this menu!', 'x', '#FF0000')
+            Zen.Functions.Notify('You don\'t have access to this menu!', 'x', '#EC4899')
         end
     end)
 end, false)

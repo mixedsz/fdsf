@@ -4,7 +4,7 @@ fx_version 'cerulean'
 game 'gta5' lua54 'yes'
 
 version 'V1'
-author 'discord.gg/ragerp'
+author 'discord.gg/bDU43jPvzy'
 
 shared_scripts {
     '@core/imports.lua', 

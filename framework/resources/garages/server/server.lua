@@ -7,7 +7,7 @@ RegisterNetEvent('garages:give', function(targetId, plate)
     local xTarget = ESX.GetPlayerFromId(targetId)
 
     if not xPlayer or not xTarget then
-        return Zen.Functions.Notify(source, 'Player not found!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Player not found!', 'xmark', '#EC4899')
     end
 
     -- Verify ownership
@@ -16,7 +16,7 @@ RegisterNetEvent('garages:give', function(targetId, plate)
     })
 
     if not vehicle then
-        return Zen.Functions.Notify(source, 'You don\'t own this vehicle!', 'car', '#FF0000')
+        return Zen.Functions.Notify(source, 'You don\'t own this vehicle!', 'car', '#EC4899')
     end
 
     -- Transfer ownership
@@ -24,8 +24,8 @@ RegisterNetEvent('garages:give', function(targetId, plate)
         xTarget.identifier, plate
     })
 
-    Zen.Functions.Notify(source, 'Vehicle transferred!', 'car', '#00FF00')
-    Zen.Functions.Notify(targetId, 'You received a vehicle! Plate: ' .. plate, 'car', '#00FF00')
+    Zen.Functions.Notify(source, 'Vehicle transferred!', 'car', '#0EA5E9')
+    Zen.Functions.Notify(targetId, 'You received a vehicle! Plate: ' .. plate, 'car', '#0EA5E9')
 
     Zen.Functions.Log('Vehicle Transfer', ('%s transferred vehicle %s to %s'):format(
         xPlayer.getName(), plate, xTarget.getName()
@@ -44,13 +44,13 @@ RegisterNetEvent('garages:delete', function(plate)
     })
 
     if not vehicle then
-        return Zen.Functions.Notify(source, 'You don\'t own this vehicle!', 'car', '#FF0000')
+        return Zen.Functions.Notify(source, 'You don\'t own this vehicle!', 'car', '#EC4899')
     end
 
     -- Delete vehicle
     MySQL.query.await('DELETE FROM owned_vehicles WHERE plate = ?', { plate })
 
-    Zen.Functions.Notify(source, 'Vehicle deleted!', 'car', '#00FF00')
+    Zen.Functions.Notify(source, 'Vehicle deleted!', 'car', '#0EA5E9')
 
     Zen.Functions.Log('Vehicle Deleted', ('%s deleted vehicle %s'):format(xPlayer.getName(), plate), 16711680)
 end)

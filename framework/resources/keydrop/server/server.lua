@@ -45,7 +45,7 @@ RegisterNetEvent('keydrop:schedule', function(duration, keys, amount)
 
     -- Verify permission
     if not hasKeyPermission(source) then
-        Zen.Functions.Notify(source, 'No permission!', 'xmark', '#FF0000')
+        Zen.Functions.Notify(source, 'No permission!', 'xmark', '#EC4899')
         return
     end
 
@@ -84,7 +84,7 @@ RegisterNetEvent('coindrop:schedule', function(duration, coinAmount)
 
     -- Verify permission
     if not hasCoinPermission(source) then
-        Zen.Functions.Notify(source, 'No permission!', 'xmark', '#FF0000')
+        Zen.Functions.Notify(source, 'No permission!', 'xmark', '#EC4899')
         return
     end
 

@@ -103,14 +103,14 @@ RegisterCommand('th', function()
 	end
 
 	if not canTakeHostage then 
-		return Zen.Functions.Notify('You need a pistol with ammo to take a hostage at gunpoint!', 'gun', '#FF0000') 
+		return Zen.Functions.Notify('You need a pistol with ammo to take a hostage at gunpoint!', 'gun', '#EC4899') 
 	end
 
 	if not TakeHostageData.InProgress then	
         local closestPlayer = lib.getClosestPlayer(cache.coords, 3.0, false)
 
         if not closestPlayer then 
-            return Zen.Functions.Notify('No One Nearby!', 'user', '#FF0000') 
+            return Zen.Functions.Notify('No One Nearby!', 'user', '#EC4899') 
         end
         
         local Target = GetPlayerServerId(closestPlayer)
@@ -184,10 +184,10 @@ RegisterCommand('th', function()
 					end
 				end
             else
-                Zen.Functions.Notify("You can't take people hostage without them surrendering!", 'xmark', '#FF0000')
+                Zen.Functions.Notify("You can't take people hostage without them surrendering!", 'xmark', '#EC4899')
             end
         else
-            Zen.Functions.Notify('No One Nearby!', 'user', '#FF0000') 
+            Zen.Functions.Notify('No One Nearby!', 'user', '#EC4899') 
         end
 	end
 end)

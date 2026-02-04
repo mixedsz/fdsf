@@ -38,7 +38,7 @@ local function openGradesMenu(gangData, memberData)
     end
 
     if memberData.rank >= tonumber(stateBag.gang_rank) then
-        return Zen.Functions.Notify('Member Is Higher Then You!', 'user', '#FF0000')
+        return Zen.Functions.Notify('Member Is Higher Then You!', 'user', '#EC4899')
     end
 
     TriggerServerEvent('gangs:changeGrade', tonumber(newGrade[1]), memberData.identifier, memberData.name)
@@ -144,7 +144,7 @@ AddEventHandler('turfs:kickOut', function(turfId)
     local turfData = turfs[turfId]
     if turfData and turfData.coords then
         SetEntityCoords(cache.ped, turfData.coords.x, turfData.coords.y - (turfData.radius + 5), turfData.coords.z)
-        Zen.Functions.Notify('You have been kicked out of the turf due to strikes!', 'xmark', '#FF0000')
+        Zen.Functions.Notify('You have been kicked out of the turf due to strikes!', 'xmark', '#EC4899')
     end
 end)
 
@@ -219,7 +219,7 @@ local function openVehiclesMenu(gangData)
                 SetVehicleNumberPlateText(callback, value.plate)
             end, true, cache.serverId)
         else
-            Zen.Functions.Notify('You Are Already In A Vehicle', 'car', '#FF0000')
+            Zen.Functions.Notify('You Are Already In A Vehicle', 'car', '#EC4899')
         end
     end)
 
@@ -350,7 +350,7 @@ RegisterCommand('gang', function()
     if not gangData then return end
 
     if not gangData.ranks[tonumber(stateBag.gang_rank)].leader then
-        return Zen.Functions.Notify('You Can\'t Interact With This!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify('You Can\'t Interact With This!', 'xmark', '#EC4899')
     end
 
     openManagementMenu(gangData)
@@ -519,7 +519,7 @@ RegisterNetEvent('turfs:active', function()
     }, function(selected, _, _)
         local option = options[selected]
         if not option or not option.args or not option.args.coords or not option.args.coords.x or not option.args.coords.y or not option.args.coords.z then
-            Zen.Functions.Notify('Invalid turf selection or coordinates!', 'xmark', '#FF0000')
+            Zen.Functions.Notify('Invalid turf selection or coordinates!', 'xmark', '#EC4899')
             return
         end
 
@@ -573,7 +573,7 @@ function point:nearby()
                     if timers[self.turfId] <= Turf.Timers['Ending'] then
                         SetEntityCoords(cache.ped, turfData.altcoords.x, turfData.altcoords.y, turfData.altcoords.z)
                         if not self.notified then
-                            Zen.Functions.Notify('Turf is ending! You cannot enter now!', 'xmark', '#FF0000')
+                            Zen.Functions.Notify('Turf is ending! You cannot enter now!', 'xmark', '#EC4899')
                             self.notified = true
                         end
                         return
@@ -642,7 +642,7 @@ function point:nearby()
                     if Turf.OnEnter['Need Gang'] then
                         SetEntityCoords(cache.ped, self.coords.x, self.coords.y - (self.markerRadius + 5), self.coords.z)
                         if not self.notified then
-                            Zen.Functions.Notify('You Must Be In A Gang!', 'xmark', '#FF0000')
+                            Zen.Functions.Notify('You Must Be In A Gang!', 'xmark', '#EC4899')
                             self.notified = true
                         end
                     end

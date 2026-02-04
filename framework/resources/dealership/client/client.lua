@@ -105,7 +105,7 @@ local function PurchaseVehicle(data)
     if not success then 
         Wait(500)
         DoScreenFadeIn(500)
-        return Zen.Functions.Notify('Cant Afford This Vehicle!', 'dollar', '#FF0000')
+        return Zen.Functions.Notify('Cant Afford This Vehicle!', 'dollar', '#EC4899')
     end
 
 
@@ -215,7 +215,7 @@ local function PreviewVehicle(vehicle, category)
 
                 if (GetGameTimer() - waiter) >= 10000 then
                     isModelLoading = false
-                    Zen.Functions.Notify(('Failed To Load Model %s (10 secs)'):format(vehicleData.model), 'xmark', '#FF0000')
+                    Zen.Functions.Notify(('Failed To Load Model %s (10 secs)'):format(vehicleData.model), 'xmark', '#EC4899')
                     break
                 end
 
@@ -245,7 +245,7 @@ local function PreviewVehicle(vehicle, category)
                 isModelLoading = false
             end
         else
-            Zen.Functions.Notify(('This Model Is Not Valid: %s'):format(data.model), 'xmark', '#FF0000')
+            Zen.Functions.Notify(('This Model Is Not Valid: %s'):format(data.model), 'xmark', '#EC4899')
         end
     end
 end
@@ -276,12 +276,12 @@ local function SelectVehicle(vehicle, category)
 
     local CDATA = GetVehicleCategory(data.label)
     if CDATA.role and not Zen.Functions.IsRolePresent(CDATA.role) then
-        return Zen.Functions.Notify('You Can\'t Access This Category', 'vehicle', '#FF0000')
+        return Zen.Functions.Notify('You Can\'t Access This Category', 'vehicle', '#EC4899')
     end
 
     local check = lib.callback.await("donor:check", false)
     if CDATA.item and not check then
-        return Zen.Functions.Notify('You Can\'t Access This Category', 'vehicle', '#FF0000')
+        return Zen.Functions.Notify('You Can\'t Access This Category', 'vehicle', '#EC4899')
     end
 
     local menu = {

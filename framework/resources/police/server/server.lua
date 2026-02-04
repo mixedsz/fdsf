@@ -70,10 +70,10 @@ lib.callback.register('police:vehicles:buy', function(source, props, vehicleType
             xPlayer.identifier, props.plate, json.encode(props), vehicleType, 'police'
         })
 
-        Zen.Functions.Notify(source, 'Vehicle purchased!', 'car', '#00FF00')
+        Zen.Functions.Notify(source, 'Vehicle purchased!', 'car', '#0EA5E9')
         return true
     else
-        Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#FF0000')
+        Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#EC4899')
         return false
     end
 end)
@@ -107,8 +107,8 @@ RegisterNetEvent('police:interaction:citizen:search:confiscate', function(target
         if targetBalance >= amount then
             xTarget.removeAccountMoney(itemName, amount)
             xPlayer.addAccountMoney('money', amount)
-            Zen.Functions.Notify(source, 'Confiscated $' .. amount, 'dollar', '#00FF00')
-            Zen.Functions.Notify(targetId, 'Police confiscated $' .. amount, 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Confiscated $' .. amount, 'dollar', '#0EA5E9')
+            Zen.Functions.Notify(targetId, 'Police confiscated $' .. amount, 'dollar', '#EC4899')
         end
     elseif itemType == 'item' then
         local targetItem = xTarget.getInventoryItem(itemName)
@@ -123,13 +123,13 @@ RegisterNetEvent('police:interaction:citizen:search:confiscate', function(target
                 MySQL.insert.await('INSERT INTO police_evidence (item, count) VALUES (?, ?)', { itemName, amount })
             end
 
-            Zen.Functions.Notify(source, 'Confiscated ' .. amount .. 'x ' .. itemName, 'box', '#00FF00')
-            Zen.Functions.Notify(targetId, 'Police confiscated ' .. amount .. 'x items', 'box', '#FF0000')
+            Zen.Functions.Notify(source, 'Confiscated ' .. amount .. 'x ' .. itemName, 'box', '#0EA5E9')
+            Zen.Functions.Notify(targetId, 'Police confiscated ' .. amount .. 'x items', 'box', '#EC4899')
         end
     elseif itemType == 'weapon' then
         xTarget.removeWeapon(itemName)
-        Zen.Functions.Notify(source, 'Confiscated weapon', 'gun', '#00FF00')
-        Zen.Functions.Notify(targetId, 'Police confiscated your weapon', 'gun', '#FF0000')
+        Zen.Functions.Notify(source, 'Confiscated weapon', 'gun', '#0EA5E9')
+        Zen.Functions.Notify(targetId, 'Police confiscated your weapon', 'gun', '#EC4899')
     end
 end)
 
@@ -140,22 +140,22 @@ RegisterNetEvent('police:evidence:take', function(itemName, count)
     if not xPlayer then return end
 
     if xPlayer.getJob().name ~= 'police' or xPlayer.getJob().grade_name ~= 'boss' then
-        return Zen.Functions.Notify(source, 'No permission!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'No permission!', 'xmark', '#EC4899')
     end
 
     local existing = MySQL.single.await('SELECT * FROM police_evidence WHERE item = ?', { itemName })
     if not existing or existing.count < count then
-        return Zen.Functions.Notify(source, 'Not enough in evidence!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Not enough in evidence!', 'xmark', '#EC4899')
     end
 
     if not xPlayer.canCarryItem(itemName, count) then
-        return Zen.Functions.Notify(source, 'Inventory full!', 'box', '#FF0000')
+        return Zen.Functions.Notify(source, 'Inventory full!', 'box', '#EC4899')
     end
 
     MySQL.update.await('UPDATE police_evidence SET count = count - ? WHERE item = ?', { count, itemName })
     xPlayer.addInventoryItem(itemName, count)
 
-    Zen.Functions.Notify(source, 'Took ' .. count .. 'x from evidence', 'box', '#00FF00')
+    Zen.Functions.Notify(source, 'Took ' .. count .. 'x from evidence', 'box', '#0EA5E9')
 end)
 
 -- Search nearby player

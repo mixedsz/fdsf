@@ -9,11 +9,35 @@ local function getESX()
     return ESX
 end
 
+-- Ensure gangs table has kills and turfs columns
+CreateThread(function()
+    Wait(5000)
+    -- Try to add columns if they don't exist (safe to run multiple times)
+    pcall(function()
+        MySQL.query.await('ALTER TABLE gangs ADD COLUMN IF NOT EXISTS kills INT(11) DEFAULT 0')
+    end)
+    pcall(function()
+        MySQL.query.await('ALTER TABLE gangs ADD COLUMN IF NOT EXISTS turfs INT(11) DEFAULT 0')
+    end)
+end)
+
 -- Get gang leaderboard data from database
 local function getGangLeaderboard()
-    local gangs = MySQL.query.await('SELECT name, label, kills, turfs FROM gangs ORDER BY turfs DESC, kills DESC')
-    local result = {}
+    local gangs = nil
 
+    -- Try with kills/turfs first, fallback to basic query
+    local success = pcall(function()
+        gangs = MySQL.query.await('SELECT name, label, kills, turfs FROM gangs ORDER BY turfs DESC, kills DESC')
+    end)
+
+    if not success or not gangs then
+        -- Fallback: query without kills/turfs columns
+        pcall(function()
+            gangs = MySQL.query.await('SELECT name, label FROM gangs ORDER BY name ASC')
+        end)
+    end
+
+    local result = {}
     if gangs then
         for _, gang in pairs(gangs) do
             result[#result + 1] = {
@@ -32,11 +56,6 @@ lib.callback.register('leaderboard:getData', function(source)
     return getGangLeaderboard()
 end)
 
--- Send leaderboard data when player loads
-RegisterNetEvent('gangs:loadedPlayer', function()
-    -- This is a relay event, not directly called here
-end)
-
 -- Update gang kills in database
 RegisterNetEvent('redzones:killed', function(killerId, reward, zoneLabel, headshot)
     local source = source
@@ -47,13 +66,15 @@ RegisterNetEvent('redzones:killed', function(killerId, reward, zoneLabel, headsh
     local killer = esx.GetPlayerFromId(killerId)
     if killer then
         killer.addMoney(reward)
-        TriggerClientEvent('showNotification', killerId, 'Kill reward: $' .. reward, 'skull', '#00FF00')
+        TriggerClientEvent('showNotification', killerId, 'Kill reward: $' .. reward, 'skull', '#0EA5E9')
 
         -- Update killer's kill count in their gang
         local killerState = Player(killerId).state
         local killerGang = killerState.gang
         if killerGang and killerGang ~= '' and killerGang ~= 'none' then
-            MySQL.update.await('UPDATE gangs SET kills = kills + 1 WHERE name = ?', { killerGang })
+            pcall(function()
+                MySQL.update.await('UPDATE gangs SET kills = kills + 1 WHERE name = ?', { killerGang })
+            end)
         end
 
         -- Send updated kill count to the killer's redzone UI

@@ -25,7 +25,7 @@ lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, pr
             nil
         })
 
-        Zen.Functions.Notify(source, 'Vehicle purchased for $' .. finalPrice .. '!', 'car', '#00FF00')
+        Zen.Functions.Notify(source, 'Vehicle purchased for $' .. finalPrice .. '!', 'car', '#0EA5E9')
 
         Zen.Functions.Log('Vehicle Purchase', ('%s purchased %s for $%s (Plate: %s)'):format(
             xPlayer.getName(), label or 'Unknown', finalPrice, props.plate
@@ -33,7 +33,7 @@ lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, pr
 
         return true
     else
-        Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#FF0000')
+        Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#EC4899')
         return false
     end
 end)

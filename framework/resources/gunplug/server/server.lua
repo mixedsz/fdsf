@@ -7,5 +7,5 @@ RegisterNetEvent('addWeaponToInventory', function(weapon, ammo)
 
     ammo = ammo or 100
     xPlayer.addWeapon(weapon, ammo)
-    Zen.Functions.Notify(source, 'Received weapon!', 'gun', '#00FF00')
+    Zen.Functions.Notify(source, 'Received weapon!', 'gun', '#0EA5E9')
 end)

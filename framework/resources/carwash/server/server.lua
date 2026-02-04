@@ -11,8 +11,8 @@ RegisterNetEvent('carwash:pay', function()
     if xPlayer.getMoney() >= price then
         xPlayer.removeMoney(price)
         TriggerClientEvent('carwash:start', source)
-        Zen.Functions.Notify(source, 'Car wash started! -$' .. price, 'car', '#00FF00')
+        Zen.Functions.Notify(source, 'Car wash started! -$' .. price, 'car', '#0EA5E9')
     else
-        Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#FF0000')
+        Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#EC4899')
     end
 end)

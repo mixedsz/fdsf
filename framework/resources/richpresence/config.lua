@@ -4,6 +4,6 @@ Zen.Config.RichPresence = {
 
     Actions = {
         { '💢 Connect', 'https://cfx.re/join/z8q6ky' },
-        { '🔗 Discord', 'https://discord.gg/ragerp' }
+        { '🔗 Discord', 'https://discord.gg/bDU43jPvzy' }
     }
 }

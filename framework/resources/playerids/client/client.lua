@@ -43,9 +43,9 @@ RegisterCommand('ids', function()
     IdsToggled = not IdsToggled
 
     if IdsToggled then
-        Zen.Functions.Notify('Player IDs enabled', 'eye', '#00FF00')
+        Zen.Functions.Notify('Player IDs enabled', 'eye', '#0EA5E9')
         toggleIds()
     else
-        Zen.Functions.Notify('Player IDs disabled', 'eye-slash', '#FF0000')
+        Zen.Functions.Notify('Player IDs disabled', 'eye-slash', '#EC4899')
     end
 end, false)

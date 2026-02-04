@@ -9,7 +9,7 @@ lib.registerMenu({
     options = BikeSpawner.Models
 }, function(_, _, args)
     if cache.vehicle then 
-        return Zen.Functions.Notify('You Already In A Vehicle', 'car', '#FF0000')
+        return Zen.Functions.Notify('You Already In A Vehicle', 'car', '#EC4899')
     end
 
     if spawned then return end

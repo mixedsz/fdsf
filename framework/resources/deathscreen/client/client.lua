@@ -143,7 +143,7 @@ function isNearRampZone(type)
         return true
     else
         if type == "combatheals" then
-            Zen.Functions.Notify('You are not near a wager zone', 'xmark', '#FB010F')
+            Zen.Functions.Notify('You are not near a wager zone', 'xmark', '#EC4899')
             return false
         end
 
@@ -158,7 +158,7 @@ RegisterCommand('ammo', function()
             if hash ~= nil then
                 AddAmmoToPed(PlayerPedId(), hash, 900)
             else
-                Zen.Functions.Notify('You Arent Holding A Weapon', 'xmark', '#FF0000')
+                Zen.Functions.Notify('You Arent Holding A Weapon', 'xmark', '#EC4899')
             end
         end
     end
@@ -169,7 +169,7 @@ RegisterCommand('r', function()
         if IsEntityDead(PlayerPedId()) then
             TriggerEvent('deathscreen:revive')
         else
-            Zen.Functions.Notify('You cannot do this while alive.', 'xmark', '#FB010F')
+            Zen.Functions.Notify('You cannot do this while alive.', 'xmark', '#EC4899')
             return end
     end
 end)
@@ -177,7 +177,7 @@ end)
 RegisterCommand('a', function()
     if isNearRampZone("combatheals") then
         if IsEntityDead(PlayerPedId()) then
-            Zen.Functions.Notify('You cannot do this while dead.', 'xmark', '#FB010F')
+            Zen.Functions.Notify('You cannot do this while dead.', 'xmark', '#EC4899')
             return
         end
         if armorCooldown then
@@ -186,7 +186,7 @@ RegisterCommand('a', function()
         if GetPedArmour(PlayerPedId()) < 100 then
             SetPedArmour(PlayerPedId(), 100)
             armorCooldown = true
-            Zen.Functions.Notify('Your armour has been replenished', 'shield', '#FB010F')
+            Zen.Functions.Notify('Your armour has been replenished', 'shield', '#EC4899')
             Wait(5000)
             armorCooldown = false
         end
@@ -196,7 +196,7 @@ end)
 RegisterCommand('h', function()
     if isNearRampZone("combatheals") then
         if IsEntityDead(PlayerPedId()) then
-            Zen.Functions.Notify('You cannot do this while dead.', 'xmark', '#FB010F')
+            Zen.Functions.Notify('You cannot do this while dead.', 'xmark', '#EC4899')
             return
         end
         if healthCooldown then
@@ -205,11 +205,11 @@ RegisterCommand('h', function()
         if GetEntityHealth(PlayerPedId()) < 200 then
             SetEntityHealth(PlayerPedId(), 200)
             healthCooldown = true
-            Zen.Functions.Notify('Your health has been replenished', 'heart', '#FB010F')
+            Zen.Functions.Notify('Your health has been replenished', 'heart', '#EC4899')
             Wait(5000)
             healthCooldown = false
         else
-            Zen.Functions.Notify('Your health is already full.', 'xmark', '#FB010F')
+            Zen.Functions.Notify('Your health is already full.', 'xmark', '#EC4899')
         end
     end
 end)
@@ -301,10 +301,10 @@ AddEventHandler('esx:onPlayerDeath', function(data)
 
     playerDead = true
 
-    -- Always send the config buttons (E, F, G) - ramp zones use R key separately
+    -- Always send the config buttons (E, F, G) - ramp zone R key is handled separately
     Zen.Functions.NUI('showDeathScreen', {
         reason = deathReason,
-        buttons = isNearRampZone("") and {{ label = "Revive Player", price = 0, key = "R" }} or DeathScreen.Buttons,
+        buttons = DeathScreen.Buttons,
         respawnTimer = (DeathScreen.OnDeath.RespawnTime / 1000),
         bleedOutTimer = (DeathScreen.OnDeath.BleedoutTime / 1000)
     })
@@ -339,7 +339,7 @@ end)
 
 RegisterCommand('die', function()
     if not Zen.Functions.CanInteract() then
-        return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#FB010F')
+        return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#EC4899')
     end
 
     SetEntityHealth(cache.ped, 0)

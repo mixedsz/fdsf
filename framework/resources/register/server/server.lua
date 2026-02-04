@@ -12,7 +12,7 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
     local fullName = (data.firstName .. ' ' .. data.lastName):lower()
     for _, word in pairs(Zen.Config.Server.BlacklistedWords or {}) do
         if string.find(fullName, word:lower()) then
-            Zen.Functions.Notify(source, 'Invalid name!', 'xmark', '#FF0000')
+            Zen.Functions.Notify(source, 'Invalid name!', 'xmark', '#EC4899')
             return false
         end
     end
@@ -30,7 +30,7 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
     local ply = Player(source)
     ply.state:set('name', data.firstName .. ' ' .. data.lastName, true)
 
-    Zen.Functions.Notify(source, 'Registration complete!', 'check', '#00FF00')
+    Zen.Functions.Notify(source, 'Registration complete!', 'check', '#0EA5E9')
 
     Zen.Functions.Log('Player Registered', ('%s registered as %s %s'):format(
         xPlayer.identifier, data.firstName, data.lastName

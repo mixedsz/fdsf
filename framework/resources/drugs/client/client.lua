@@ -1,10 +1,40 @@
 local Drugs = Zen.Config.Drugs
 local DrugsData = { Busy = false, Pressed = false }
-local textUIShown = false
+local currentTextUI = nil
 
-RegisterNetEvent('drugs:start', function(drugData, locData, task)
+-- Server tells us to stop (e.g. inventory full, missing items)
+RegisterNetEvent('drugs:stopClient', function()
+    DrugsData.Busy = false
+    if currentTextUI then
+        lib.hideTextUI()
+        currentTextUI = nil
+    end
+end)
+
+local function showText(text)
+    if currentTextUI == text then return end
+    if currentTextUI then
+        lib.hideTextUI()
+    end
+    lib.showTextUI(text)
+    currentTextUI = text
+end
+
+local function hideText()
+    if currentTextUI then
+        lib.hideTextUI()
+        currentTextUI = nil
+    end
+end
+
+-- Drug start handler - runs the collection/processing loop
+AddEventHandler('drugs:start', function(drugData, locData, task)
     DrugsData.Busy = true
     Zen.Functions.Notify(('You Started %sing %s'):format(task, drugData.Name))
+
+    -- Update text UI to show stop option
+    showText(('Press [E] To Stop %sing %s'):format(task, drugData.Name))
+
     while true do
         Wait(locData.Time * 1000)
         if DrugsData.Busy then
@@ -12,7 +42,6 @@ RegisterNetEvent('drugs:start', function(drugData, locData, task)
                 DrugsData.Busy = false
                 break
             end
-
             TriggerServerEvent('drugs:receive', locData.Items)
         else
             break
@@ -20,9 +49,12 @@ RegisterNetEvent('drugs:start', function(drugData, locData, task)
     end
 end)
 
-RegisterNetEvent('drugs:stop', function(drugData, task)
+-- Drug stop handler
+AddEventHandler('drugs:stop', function(drugData, task)
     DrugsData.Busy = false
     Zen.Functions.Notify(('You Stopped %sing %s'):format(task, drugData.Name))
+    -- Reset text to show start option
+    hideText()
 end)
 
 local function createDrugBlip(drugData, zone)
@@ -47,28 +79,17 @@ RegisterNetEvent('playerLoaded', function()
                 function marker:onExit()
                     DrugsData.Busy = false
                     Cooldown = true
-                    if textUIShown then
-                        lib.hideTextUI()
-                        textUIShown = false
-                    end
+                    hideText()
                     SetTimeout(locData.Time * 1000, function() Cooldown = false end)
                 end
 
                 function marker:nearby()
                     if not Cooldown then
-                        if not textUIShown then
-                            lib.showTextUI((DrugsData.Busy and 'Press [E] To Stop %sing %s' or 'Press [E] To Start %sing %s'):format(self.zone, drugData.Name))
-                            textUIShown = true
-                        end
+                        local text = (DrugsData.Busy and 'Press [E] To Stop %sing %s' or 'Press [E] To Start %sing %s'):format(self.zone, drugData.Name)
+                        showText(text)
 
                         if IsControlJustPressed(0, 38) and not DrugsData.Pressed then
                             DrugsData.Pressed = true
-
-                            -- Hide and re-show text UI with updated state after action
-                            if textUIShown then
-                                lib.hideTextUI()
-                                textUIShown = false
-                            end
 
                             if DrugsData.Busy then
                                 TriggerEvent('drugs:stop', drugData, self.zone)
@@ -79,7 +100,7 @@ RegisterNetEvent('playerLoaded', function()
                             SetTimeout(locData.Time * 1000, function() DrugsData.Pressed = false end)
                         end
                     end
-                end                
+                end
             end
         end
     end

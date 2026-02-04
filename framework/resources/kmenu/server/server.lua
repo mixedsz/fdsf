@@ -10,13 +10,13 @@ RegisterNetEvent('shop:purchase', function(item, amount, shopType)
     -- Get item info from Zen.Items
     local itemInfo = Zen.Items and Zen.Items[item]
     if not itemInfo then
-        return Zen.Functions.Notify(source, 'Invalid item!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Invalid item!', 'xmark', '#EC4899')
     end
 
     local price = itemInfo.price or 0
 
     if not xPlayer.canCarryItem(item, amount) then
-        return Zen.Functions.Notify(source, 'Inventory full!', 'box', '#FF0000')
+        return Zen.Functions.Notify(source, 'Inventory full!', 'box', '#EC4899')
     end
 
     local totalPrice = price * amount
@@ -24,9 +24,9 @@ RegisterNetEvent('shop:purchase', function(item, amount, shopType)
     if xPlayer.getMoney() >= totalPrice then
         xPlayer.removeMoney(totalPrice)
         xPlayer.addInventoryItem(item, amount)
-        Zen.Functions.Notify(source, 'Purchased ' .. amount .. 'x ' .. (itemInfo.label or item), 'check', '#00FF00')
+        Zen.Functions.Notify(source, 'Purchased ' .. amount .. 'x ' .. (itemInfo.label or item), 'check', '#0EA5E9')
     else
-        Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#FF0000')
+        Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#EC4899')
     end
 end)
 
@@ -39,7 +39,7 @@ RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
     -- Get weapon info
     local weaponInfo = Zen.Weapons and Zen.Weapons[weapon]
     if not weaponInfo then
-        return Zen.Functions.Notify(source, 'Invalid weapon!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Invalid weapon!', 'xmark', '#EC4899')
     end
 
     local price = 0 -- Would come from config
@@ -48,9 +48,9 @@ RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
         if xPlayer.getMoney() >= price then
             xPlayer.removeMoney(price)
             xPlayer.addWeapon(weapon, 100)
-            Zen.Functions.Notify(source, 'Purchased weapon!', 'gun', '#00FF00')
+            Zen.Functions.Notify(source, 'Purchased weapon!', 'gun', '#0EA5E9')
         else
-            Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#EC4899')
         end
     end
 end)

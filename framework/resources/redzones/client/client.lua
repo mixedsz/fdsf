@@ -42,7 +42,7 @@ local function perform(action, zone)
 
         -- Debug notification
         if Zen.Config.Server and Zen.Config.Server.Debug then
-            Zen.Functions.Notify('Entered ' .. zoneData.label, 'location', '#00FF00')
+            Zen.Functions.Notify('Entered ' .. zoneData.label, 'location', '#0EA5E9')
         end
     else
         -- Exiting zone

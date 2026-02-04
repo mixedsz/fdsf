@@ -21,8 +21,8 @@ RegisterNetEvent('billing:send', function(targetId, society, label, amount)
     local bills = MySQL.query.await('SELECT * FROM billing WHERE identifier = ? AND paid = 0', { xTarget.identifier })
     TriggerClientEvent('billing:menu', targetId, bills or {})
 
-    Zen.Functions.Notify(source, 'Bill sent to player!', 'file-invoice', '#00FF00')
-    Zen.Functions.Notify(targetId, 'You received a bill for $' .. amount .. ' - ' .. label, 'file-invoice', '#FF0000')
+    Zen.Functions.Notify(source, 'Bill sent to player!', 'file-invoice', '#0EA5E9')
+    Zen.Functions.Notify(targetId, 'You received a bill for $' .. amount .. ' - ' .. label, 'file-invoice', '#EC4899')
 end)
 
 -- Pay bill
@@ -36,12 +36,12 @@ RegisterNetEvent('billing:pay', function(billId)
     })
 
     if not bill then
-        return Zen.Functions.Notify(source, 'Bill not found!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Bill not found!', 'xmark', '#EC4899')
     end
 
     local bankBalance = xPlayer.getAccount('bank').money
     if bankBalance < bill.amount then
-        return Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#FF0000')
+        return Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#EC4899')
     end
 
     -- Pay the bill
@@ -63,7 +63,7 @@ RegisterNetEvent('billing:pay', function(billId)
     local bills = MySQL.query.await('SELECT * FROM billing WHERE identifier = ? AND paid = 0', { xPlayer.identifier })
     TriggerClientEvent('billing:menu', source, bills or {})
 
-    Zen.Functions.Notify(source, 'Bill paid!', 'check', '#00FF00')
+    Zen.Functions.Notify(source, 'Bill paid!', 'check', '#0EA5E9')
 end)
 
 -- On player load, send their bills

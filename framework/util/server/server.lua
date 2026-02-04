@@ -22,6 +22,16 @@ CreateThread(function()
 
     if ESX then
         print('[Zen] ESX initialized successfully on server')
+
+        -- Register ESX-style callbacks that other resources expect
+        if ESX.RegisterServerCallback then
+            ESX.RegisterServerCallback('esx_vehicleshop:getPlayerGang', function(source, cb)
+                local xPlayer = ESX.GetPlayerFromId(source)
+                if not xPlayer then return cb('none') end
+                local gangState = Player(source).state.gang
+                cb(gangState or 'none')
+            end)
+        end
     else
         print('[Zen] WARNING: ESX failed to initialize!')
     end

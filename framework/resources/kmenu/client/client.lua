@@ -2,13 +2,13 @@ local KMenu = Zen.Config.KMenu
 
 local function Action(type, data)
     if not Zen.Functions.CanInteract() then 
-        return Zen.Functions.Notify('You Can\'t Do This Right Now!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify('You Can\'t Do This Right Now!', 'xmark', '#EC4899')
     end
 
     if type == 'teleport' then 
         SetEntityCoords(cache.ped, data.location, false, false, false, true)
     elseif type == 'weapon' then 
-        if HasPedGotWeapon(cache.ped, data.weapon) then return Zen.Functions.Notify('You Already Have That Gun!', 'gun', '#FF0000') end
+        if HasPedGotWeapon(cache.ped, data.weapon) then return Zen.Functions.Notify('You Already Have That Gun!', 'gun', '#EC4899') end
         TriggerServerEvent('gunstore:purchase', 'money', data.weapon, 'kmenu')
     elseif type == 'item' then
         TriggerServerEvent('shop:purchase', data.item, data.amount, 'kmenu')

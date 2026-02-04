@@ -11,8 +11,8 @@ RegisterNetEvent('repair:use', function()
     if repairItem and repairItem.count > 0 then
         xPlayer.removeInventoryItem('repairkit', 1)
         TriggerClientEvent('repair:start', source)
-        Zen.Functions.Notify(source, 'Repairing vehicle...', 'wrench', '#00FF00')
+        Zen.Functions.Notify(source, 'Repairing vehicle...', 'wrench', '#0EA5E9')
     else
-        Zen.Functions.Notify(source, 'You need a repair kit!', 'wrench', '#FF0000')
+        Zen.Functions.Notify(source, 'You need a repair kit!', 'wrench', '#EC4899')
     end
 end)

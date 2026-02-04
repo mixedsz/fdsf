@@ -4,7 +4,7 @@ local function OpenBills()
     if not Zen.Functions.CanInteract() then return end
 
     if not options or #options <= 0 then
-        return Zen.Functions.Notify('You Don\'t Have Any Bills', 'bills', '#FF0000')
+        return Zen.Functions.Notify('You Don\'t Have Any Bills', 'bills', '#EC4899')
     end      
     
     lib.setMenuOptions('billingMenu', options)

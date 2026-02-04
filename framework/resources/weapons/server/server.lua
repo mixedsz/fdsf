@@ -15,7 +15,7 @@ RegisterNetEvent('weapons:give', function(targetId, weapon, ammo)
     local xTarget = ESX.GetPlayerFromId(targetId)
     if xTarget then
         xTarget.addWeapon(weapon, ammo or 100)
-        Zen.Functions.Notify(targetId, 'You received a weapon!', 'gun', '#00FF00')
+        Zen.Functions.Notify(targetId, 'You received a weapon!', 'gun', '#0EA5E9')
     end
 end)
 

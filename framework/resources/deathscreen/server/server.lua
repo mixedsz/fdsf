@@ -22,13 +22,13 @@ RegisterNetEvent('deathscreen:performAfterDeath', function(cost, weapon)
         local bankBalance = xPlayer.getAccount('bank').money
         if bankBalance >= cost then
             xPlayer.removeAccountMoney('bank', cost)
-            TriggerClientEvent('showNotification', source, 'Respawn cost: $' .. cost, 'dollar', '#FF0000')
+            TriggerClientEvent('showNotification', source, 'Respawn cost: $' .. cost, 'dollar', '#EC4899')
         else
             -- Try cash if bank doesn't have enough
             local cashBalance = xPlayer.getMoney()
             if cashBalance >= cost then
                 xPlayer.removeMoney(cost)
-                TriggerClientEvent('showNotification', source, 'Respawn cost: $' .. cost, 'dollar', '#FF0000')
+                TriggerClientEvent('showNotification', source, 'Respawn cost: $' .. cost, 'dollar', '#EC4899')
             end
         end
     end

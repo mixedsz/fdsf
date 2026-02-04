@@ -25,7 +25,7 @@ local function GangLeaderBoard()
     end
 
     if not leaderboard or #leaderboard == 0 then
-        Zen.Functions.Notify('No gang data available', 'users', '#FF0000')
+        Zen.Functions.Notify('No gang data available', 'users', '#EC4899')
         return
     end
 

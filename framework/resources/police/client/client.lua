@@ -320,7 +320,7 @@ lib.registerMenu({
 	local closestPlayer = lib.getClosestPlayer(cache.coords, 3.0, false)
 
 	if not closestPlayer or closestPlayer == -1 then 
-		return Zen.Functions.Notify('No One Nearby!', 'user', '#FF0000') 
+		return Zen.Functions.Notify('No One Nearby!', 'user', '#EC4899') 
 	end
 
 	interaction.closestPlayer = closestPlayer
@@ -349,7 +349,7 @@ lib.registerMenu({
 		local billsTable = {}
 
 		if #bills == 0 or bills == nil then 
-			return Zen.Functions.Notify('Player Has No Fines!', 'xmark', '#FF0000')
+			return Zen.Functions.Notify('Player Has No Fines!', 'xmark', '#EC4899')
 		end
 	
 		for i = 1, #bills do 
@@ -395,13 +395,13 @@ lib.registerMenu({
 		
 			local length = string.len(input[1])
 			if not input[1] or length < 2 or length > 13 then
-				return Zen.Functions.Notify('Invalid Registration Number.', 'car', '#FF0000')
+				return Zen.Functions.Notify('Invalid Registration Number.', 'car', '#EC4899')
 			end
 
 			local out, model, owner = lib.callback.await('police:interaction:vehicles', false, input[1])
 
 			if not out then 
-				return Zen.Functions.Notify('Vehicle Is Not On The Streets!', 'car', '#FF0000')
+				return Zen.Functions.Notify('Vehicle Is Not On The Streets!', 'car', '#EC4899')
 			end
 
 			lib.setMenuOptions('police-vehicle-info', {
@@ -453,7 +453,7 @@ lib.registerMenu({
 						closestVehicle = lib.getClosestVehicle(cache.coords, 3.0, false)
 						
 						if not DoesEntityExist(closestVehicle) and interaction.vehicle.busy then
-							Zen.Functions.Notify('The impound has been canceled because the vehicle moved.', 'car', '#FF0000')
+							Zen.Functions.Notify('The impound has been canceled because the vehicle moved.', 'car', '#EC4899')
 							ClearPedTasks(cache.ped)
 							interaction.vehicle.busy = false
 							break
@@ -503,7 +503,7 @@ lib.addKeybind({
 	defaultKey = 'F6',
 	onReleased = function(self)
 		if not Zen.Functions.CanInteract() then 
-			return Zen.Functions.Notify('Cant Do This Right Now!', 'xmark', '#FF0000')
+			return Zen.Functions.Notify('Cant Do This Right Now!', 'xmark', '#EC4899')
 		end
 		if lib.getOpenMenu() == 'police-interaction' then return end
 		if stateBag.job.name ~= 'police' then return end
@@ -527,10 +527,10 @@ lib.registerMenu({
 
 	if args and args.component then 
 		if not HasPedGotWeaponComponent(cache.ped, args.weapon, GetHashKey(args.component)) then 
-			Zen.Functions.Notify('You Put On '..args.label, 'check', '#00FF00')
+			Zen.Functions.Notify('You Put On '..args.label, 'check', '#0EA5E9')
 			GiveWeaponComponentToPed(cache.ped, args.weapon, GetHashKey(args.component))
 		else
-			Zen.Functions.Notify('You Took Off '..args.label, 'xmark', '#FF0000')
+			Zen.Functions.Notify('You Took Off '..args.label, 'xmark', '#EC4899')
 			RemoveWeaponComponentFromPed(cache.ped, args.weapon, GetHashKey(args.component))
 		end
 	end
@@ -575,7 +575,7 @@ lib.registerMenu({
 				lib.setMenuOptions('police-armory-weapons-components', components)
 				lib.showMenu('police-armory-weapons-components')
 			else
-				Zen.Functions.Notify('No Components For This Weapon!', 'xmark', '#FF0000')
+				Zen.Functions.Notify('No Components For This Weapon!', 'xmark', '#EC4899')
 			end
 			
 			return
@@ -679,7 +679,7 @@ lib.registerMenu({
 	local count = tonumber(input[1])
 
 	if count == 0 or item.count < count then
-		Zen.Functions.Notify('Invalid Quantity!', 'xmark', '#FF0000')
+		Zen.Functions.Notify('Invalid Quantity!', 'xmark', '#EC4899')
 	else
 		TriggerServerEvent('police:evidence:take', item.name, count)
 		lib.showMenu('police-evidence')
@@ -701,7 +701,7 @@ lib.registerMenu({
 		local evidenceItems = lib.callback.await('police:evidence:items', false)
 
 		if table.type(evidenceItems) == 'empty' then 
-			return Zen.Functions.Notify('No Items Available', 'box', '#FF0000')
+			return Zen.Functions.Notify('No Items Available', 'box', '#EC4899')
 		end
 
 		for i = 1, #evidenceItems do
@@ -791,7 +791,7 @@ lib.registerMenu({
 			RemoveVehicle()
 
 			if not success then 
-				return Zen.Functions.Notify('Cant Afford This Vehicle!', 'dollar', '#FF0000')
+				return Zen.Functions.Notify('Cant Afford This Vehicle!', 'dollar', '#EC4899')
 			end
 		end
 	end
@@ -813,7 +813,7 @@ lib.registerMenu({
 		local myVehicles = {}
 
 		if table.type(vehicles) == 'empty' then 
-			return Zen.Functions.Notify('You Dont Own Any Vehicles!', 'car', '#FF0000')
+			return Zen.Functions.Notify('You Dont Own Any Vehicles!', 'car', '#EC4899')
 		end
 
 		for i = 1, #vehicles do 
@@ -857,7 +857,7 @@ lib.registerMenu({
 		end
 
 		if table.type(shopVehicles) == 'empty' then 
-			return Zen.Functions.Notify('Cant Purchase Any Vehicles!', 'car', '#FF0000')
+			return Zen.Functions.Notify('Cant Purchase Any Vehicles!', 'car', '#EC4899')
 		end
 
 		lib.setMenuOptions('police-vehicles-view', shopVehicles)
@@ -942,7 +942,7 @@ lib.registerMenu({
 			RemoveVehicle()
 
 			if not success then 
-				return Zen.Functions.Notify('Cant Afford This Vehicle!', 'dollar', '#FF0000')
+				return Zen.Functions.Notify('Cant Afford This Vehicle!', 'dollar', '#EC4899')
 			end
 		end
 	end
@@ -964,7 +964,7 @@ lib.registerMenu({
 		local myVehicles = {}
 
 		if table.type(helicopters) == 'empty' then 
-			return Zen.Functions.Notify('You Dont Own Any Helicopters!', 'car', '#FF0000')
+			return Zen.Functions.Notify('You Dont Own Any Helicopters!', 'car', '#EC4899')
 		end
 
 		for i = 1, #helicopters do 
@@ -1010,7 +1010,7 @@ lib.registerMenu({
 		end
 
 		if table.type(shopVehicles) == 'empty' then 
-			return Zen.Functions.Notify('Cant Purchase Any Helicopters!', 'helicopter', '#FF0000')
+			return Zen.Functions.Notify('Cant Purchase Any Helicopters!', 'helicopter', '#EC4899')
 		end
 
 		lib.setMenuOptions('police-helicopters-view', shopVehicles)

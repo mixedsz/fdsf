@@ -25,7 +25,7 @@ RegisterNetEvent('comserv:complete', function()
         if playersInService[source].completed >= playersInService[source].tasks then
             playersInService[source] = nil
             TriggerClientEvent('comserv:finish', source)
-            Zen.Functions.Notify(source, 'Community service completed!', 'check', '#00FF00')
+            Zen.Functions.Notify(source, 'Community service completed!', 'check', '#0EA5E9')
         else
             local remaining = playersInService[source].tasks - playersInService[source].completed
             TriggerClientEvent('comserv:update', source, remaining)

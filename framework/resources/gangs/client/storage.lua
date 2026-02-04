@@ -72,7 +72,7 @@ lib.registerMenu({
             end
 
             if table.type(aOptions) == 'empty' then 
-                return Zen.Functions.Notify('No Accounts Available', 'xmark', '#FF0000')
+                return Zen.Functions.Notify('No Accounts Available', 'xmark', '#EC4899')
             end
 
             lib.setMenuOptions('storage_accounts_withdraw_options', aOptions)
@@ -96,7 +96,7 @@ lib.registerMenu({
             end
 
             if table.type(aOptions) == 'empty' then 
-                return Zen.Functions.Notify('No Accounts Available', 'xmark', '#FF0000')
+                return Zen.Functions.Notify('No Accounts Available', 'xmark', '#EC4899')
             end
 
             lib.setMenuOptions('storage_accounts_deposit_options', aOptions)
@@ -164,7 +164,7 @@ lib.registerMenu({
             end
 
             if table.type(iOptions) == 'empty' then 
-                return Zen.Functions.Notify('No Items Available', 'xmark', '#FF0000')
+                return Zen.Functions.Notify('No Items Available', 'xmark', '#EC4899')
             end
 
             lib.setMenuOptions('storage_items_withdraw_options', iOptions)
@@ -189,7 +189,7 @@ lib.registerMenu({
             end
 
             if table.type(iOptions) == 'empty' then 
-                return Zen.Functions.Notify('No Items Available', 'xmark', '#FF0000')
+                return Zen.Functions.Notify('No Items Available', 'xmark', '#EC4899')
             end
 
             lib.setMenuOptions('storage_items_deposit_options', iOptions)

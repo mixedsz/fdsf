@@ -56,6 +56,11 @@ CREATE TABLE IF NOT EXISTS `player_outfits` (
     KEY `identifier` (`identifier`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Add kills and turfs columns to gangs table if they don't exist
+-- (needed if gangs table was created before these columns were added)
+ALTER TABLE `gangs` ADD COLUMN IF NOT EXISTS `kills` INT(11) DEFAULT 0;
+ALTER TABLE `gangs` ADD COLUMN IF NOT EXISTS `turfs` INT(11) DEFAULT 0;
+
 -- Ensure owned_vehicles has all required columns
 ALTER TABLE `owned_vehicles` ADD COLUMN IF NOT EXISTS `type` VARCHAR(50) DEFAULT 'car';
 ALTER TABLE `owned_vehicles` ADD COLUMN IF NOT EXISTS `job` VARCHAR(50) DEFAULT NULL;

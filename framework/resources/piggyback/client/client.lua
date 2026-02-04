@@ -7,7 +7,7 @@ PiggyBackData = {
 
 RegisterCommand("pb",function()
     if PiggyBackData.Cooldown then
-        return Zen.Functions.Notify('Wait 3 Seconds To Use This Command Again!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify('Wait 3 Seconds To Use This Command Again!', 'xmark', '#EC4899')
     end
 
     if PiggyBackData.InProgress then 
@@ -20,13 +20,13 @@ RegisterCommand("pb",function()
     end
 
     if not Zen.Functions.CanInteract() then 
-        return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#EC4899')
     end
 
     local closestPlayer = lib.getClosestPlayer(cache.coords, 3.0, false)
 
     if not closestPlayer then 
-        return Zen.Functions.Notify('No One Nearby!', 'user', '#FF0000') 
+        return Zen.Functions.Notify('No One Nearby!', 'user', '#EC4899') 
     end
         
     local targetSrc = GetPlayerServerId(closestPlayer)
@@ -38,7 +38,7 @@ RegisterCommand("pb",function()
         TriggerServerEvent("piggyback:sync",targetSrc)
 
     else
-        Zen.Functions.Notify('No One Nearby!', 'user', '#FF0000')
+        Zen.Functions.Notify('No One Nearby!', 'user', '#EC4899')
     end
 
     SetTimeout(PiggyBack.Cooldown * 1000, function()

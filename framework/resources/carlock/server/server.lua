@@ -21,9 +21,9 @@ RegisterNetEvent('carlock:givekeys', function(targetId, plate)
 
     if vehicle then
         TriggerClientEvent('carlock:receivekeys', targetId, plate)
-        Zen.Functions.Notify(source, 'Gave keys to player!', 'key', '#00FF00')
-        Zen.Functions.Notify(targetId, 'Received car keys for ' .. plate, 'key', '#00FF00')
+        Zen.Functions.Notify(source, 'Gave keys to player!', 'key', '#0EA5E9')
+        Zen.Functions.Notify(targetId, 'Received car keys for ' .. plate, 'key', '#0EA5E9')
     else
-        Zen.Functions.Notify(source, 'You don\'t own this vehicle!', 'xmark', '#FF0000')
+        Zen.Functions.Notify(source, 'You don\'t own this vehicle!', 'xmark', '#EC4899')
     end
 end)

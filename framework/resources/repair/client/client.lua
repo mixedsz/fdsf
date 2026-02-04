@@ -25,11 +25,11 @@ for i = 1, #Repair.Locations do
             if not vehicle then return end
 
             if not cache.seat == -1 then
-                return Zen.Functions.Notify('You Need To Be The Driver!', 'car', '#FF0000')
+                return Zen.Functions.Notify('You Need To Be The Driver!', 'car', '#EC4899')
             end
         
             if repairing then 
-                return Zen.Functions.Notify('You Are Already Repairing!', 'car', '#FF0000') 
+                return Zen.Functions.Notify('You Are Already Repairing!', 'car', '#EC4899') 
             end
 
             repairing = true
@@ -61,18 +61,18 @@ AddEventHandler('repair:vehicle', function()
     local vehicle = cache.vehicle
 
     if not DoesEntityExist(cache.vehicle) or not cache.seat == -1 then
-        return Zen.Functions.Notify('You Aren\'t In A Vehicle!', 'car', '#FF0000')
+        return Zen.Functions.Notify('You Aren\'t In A Vehicle!', 'car', '#EC4899')
     end
 
     if repairing then 
-        return Zen.Functions.Notify('You Are Already Repairing!', 'car', '#FF0000') 
+        return Zen.Functions.Notify('You Are Already Repairing!', 'car', '#EC4899') 
     end
 
     local vehicleHandle = tostring(vehicle)
     local repairCount = repairCounts[vehicleHandle] or 0
 
     if (repairCount >= maxRepairCount) then
-        return Zen.Functions.Notify("Your vehicle was too badly damaged. Unable to repair!", 'car', '#FF0000')
+        return Zen.Functions.Notify("Your vehicle was too badly damaged. Unable to repair!", 'car', '#EC4899')
     end
 
     repairing = true
@@ -93,9 +93,9 @@ AddEventHandler('repair:vehicle', function()
             SetVehicleEngineOn(vehicle, true, false)
             SetVehicleOilLevel(vehicle,(GetVehicleOilLevel(vehicle)/3)-0.5)
             repairCounts[vehicleHandle] = repairCount + 1
-            Zen.Functions.Notify(Repair.Messages.Fix[math.random(#Repair.Messages.Fix)], 'car', '#00FF00')
+            Zen.Functions.Notify(Repair.Messages.Fix[math.random(#Repair.Messages.Fix)], 'car', '#0EA5E9')
         else
-            Zen.Functions.Notify(Repair.Messages.NoFix[math.random(#Repair.Messages.NoFix)], 'car', '#FF0000')
+            Zen.Functions.Notify(Repair.Messages.NoFix[math.random(#Repair.Messages.NoFix)], 'car', '#EC4899')
         end
 
         repairing = false

@@ -104,31 +104,18 @@ CreateThread(function()
     SetRadarZoom(1100)
     ToggleUIs(true)
 
-    -- Wait for ESX accounts to be fully loaded before updating HUD
-    local accountsReady = false
-    local retries = 0
-    while not accountsReady and retries < 30 do
-        local esx = GetESX()
-        local ply = esx and esx.GetPlayerData() or nil
-        if ply and ply.accounts and #ply.accounts > 0 then
-            -- Verify accounts actually have data
-            for i = 1, #ply.accounts do
-                if ply.accounts[i].name == 'money' or ply.accounts[i].name == 'bank' then
-                    accountsReady = true
-                    break
-                end
-            end
-        end
-        if not accountsReady then
-            Wait(500)
-            retries = retries + 1
-        end
+    -- Fetch real account data from server (authoritative) for initial HUD
+    Wait(2000)
+    local serverAccounts = lib.callback.await('hud:getAccounts', false)
+    if serverAccounts then
+        local data = {}
+        data.money = Zen.Functions.FormatCommas(serverAccounts.money or 0)
+        data.bank = Zen.Functions.FormatCommas(serverAccounts.bank or 0)
+        data.dirty = Zen.Functions.FormatCommas(serverAccounts.black_money or 0)
+        SendNUIMessage({ action = 'UpdateMoneyHud', data = data })
     end
 
-    UpdateTopRight()
-
-    -- Refresh HUD again after a short delay to catch late-loading data
-    Wait(3000)
+    -- Also do a full refresh for job/gang data
     UpdateTopRight()
 
 	while true do
@@ -233,8 +220,16 @@ end)
 
 -- ESX fires this when player is fully loaded with all data
 RegisterNetEvent('esx:playerLoaded', function(xPlayer)
-    -- Full refresh of HUD with fresh ESX data
+    -- Full refresh of HUD with fresh ESX data from server
     Wait(1000)
+    local serverAccounts = lib.callback.await('hud:getAccounts', false)
+    if serverAccounts then
+        local data = {}
+        data.money = Zen.Functions.FormatCommas(serverAccounts.money or 0)
+        data.bank = Zen.Functions.FormatCommas(serverAccounts.bank or 0)
+        data.dirty = Zen.Functions.FormatCommas(serverAccounts.black_money or 0)
+        SendNUIMessage({ action = 'UpdateMoneyHud', data = data })
+    end
     UpdateTopRight()
     ToggleUIs(true)
 end)

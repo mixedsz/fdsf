@@ -25,16 +25,16 @@ local function confirmRegister(data)
 
     local firstName, lastName, dob, gender = data.firstName, data.lastName, data.birthday, data.gender
     if not firstName or string.len(firstName) < 3 then 
-		return Zen.Functions.Notify('Please make sure you have filled out a first name and make sure it is over 3 characters', '#FF0000')
+		return Zen.Functions.Notify('Please make sure you have filled out a first name and make sure it is over 3 characters', '#EC4899')
     end
     if not lastName or string.len(lastName) < 3 then 
-		return Zen.Functions.Notify('Please make sure you have filled out a last name and make sure it is over 3 characters', '#FF0000')
+		return Zen.Functions.Notify('Please make sure you have filled out a last name and make sure it is over 3 characters', '#EC4899')
     end
     if not dob or string.len(dob) < 3 then 
-		return Zen.Functions.Notify('Please make sure you have filled out a birthday', '#FF0000')
+		return Zen.Functions.Notify('Please make sure you have filled out a birthday', '#EC4899')
     end
     if not gender or string.len(gender) < 3 then 
-		return Zen.Functions.Notify('Please make sure you selected a gender', '#FF0000')
+		return Zen.Functions.Notify('Please make sure you selected a gender', '#EC4899')
     end
 
     local success = lib.callback.await('fatal:registerPlayer', false, data)

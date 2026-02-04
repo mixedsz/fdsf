@@ -146,7 +146,7 @@ end)
 
 lib.callback.register('admin:car', function(model)
     if not IsModelInCdimage(joaat(model)) then 
-        Zen.Functions.Notify('Thats Not A Valid Model!', 'car', '#FF0000')
+        Zen.Functions.Notify('Thats Not A Valid Model!', 'car', '#EC4899')
         return false
     end
 
@@ -160,7 +160,7 @@ lib.callback.register('admin:car', function(model)
         end
 
         if proceed == false then 
-            return Zen.Functions.Notify('You Can\'t Spawn This!', 'car', '#FF0000')
+            return Zen.Functions.Notify('You Can\'t Spawn This!', 'car', '#EC4899')
         end
     end
 
@@ -238,9 +238,9 @@ local function TPM()
 
             Wait(0)
         end
-        Zen.Functions.Notify('Teleported To Marker!', 'check', '#00FF00')
+        Zen.Functions.Notify('Teleported To Marker!', 'check', '#0EA5E9')
     else
-        Zen.Functions.Notify('No Waypoint Set!', 'ban', '#FF0000')
+        Zen.Functions.Notify('No Waypoint Set!', 'ban', '#EC4899')
     end
 end
 
@@ -298,7 +298,7 @@ lib.registerMenu({
                     if reason and reason[1] ~= '' then
                         ExecuteCommand('kick '.. args.id ..' ' .. table.concat(reason, " "))
                     else
-                        Zen.Functions.Notify('Please put a reason!', 'ban', '#FF0000')
+                        Zen.Functions.Notify('Please put a reason!', 'ban', '#EC4899')
                     end
                     
                     Wait(250)
@@ -313,7 +313,7 @@ lib.registerMenu({
                     if reason and reason[1] ~= '' then
                         ExecuteCommand('ban '.. args.id ..' ' .. table.concat(reason, " ") .. ' ' ..tostring(BanLengths[scroll2].value))
                     else
-                        Zen.Functions.Notify('Please put a reason!', 'ban', '#FF0000')
+                        Zen.Functions.Notify('Please put a reason!', 'ban', '#EC4899')
                     end
                     
                     Wait(250)
@@ -339,7 +339,7 @@ lib.registerMenu({
                         }
 
                         local pedCoords = lib.callback.await('admin:server:callback', false, 'coords', { target = args.id })
-                        if pedCoords == nil then return Zen.Functions.Notify('This Player Isn\'t Online Anymore!', 'user', '#FF0000') end
+                        if pedCoords == nil then return Zen.Functions.Notify('This Player Isn\'t Online Anymore!', 'user', '#EC4899') end
 
                         lib.showTextUI('Hold [E] To Stop')
                         RequestCollisionAtCoord(pedCoords)
@@ -365,7 +365,7 @@ lib.registerMenu({
                             
                             if spectating ~= args.id then
                                 StopSpectate()                     
-                                Zen.Functions.Notify('This Player Isn\'t Online Anymore!', 'xmark', '#FF0000')
+                                Zen.Functions.Notify('This Player Isn\'t Online Anymore!', 'xmark', '#EC4899')
                             end
                             lib.hideTextUI()
                             spectating = false
@@ -413,7 +413,7 @@ lib.registerMenu({
                     if reason and reason[1] ~= '' then
                         ExecuteCommand('offlineban '.. args.identifier ..' ' .. table.concat(reason, " ") .. ' ' ..tostring(BanLengths[scroll2].value))
                     else
-                        Zen.Functions.Notify('Please put a reason!', 'ban', '#FF0000')
+                        Zen.Functions.Notify('Please put a reason!', 'ban', '#EC4899')
                     end
                     
                     Wait(250)
@@ -526,7 +526,7 @@ lib.registerMenu({
         local vehicle = cache.vehicle
 
         if vehicle == false and action ~= 'spawnvehicle' then
-            return Zen.Functions.Notify('You\'re Not In A Vehicle!', 'car', '#FF0000')
+            return Zen.Functions.Notify('You\'re Not In A Vehicle!', 'car', '#EC4899')
         end
 
         if action == 'spawnvehicle' then

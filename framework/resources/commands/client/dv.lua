@@ -4,7 +4,7 @@ RegisterCommand('dv', function()
     end
 
     if not Zen.Functions.CanInteract() then 
-        return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify('Can\'t Do This Right Now!', 'xmark', '#EC4899')
     end
 
     if cache.seat and cache.seat == -1 then

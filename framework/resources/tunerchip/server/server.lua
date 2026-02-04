@@ -19,5 +19,5 @@ RegisterNetEvent('tunerchip:used', function()
     if not xPlayer then return end
 
     xPlayer.removeInventoryItem('tunerchip', 1)
-    Zen.Functions.Notify(source, 'Tuner chip applied!', 'gear', '#00FF00')
+    Zen.Functions.Notify(source, 'Tuner chip applied!', 'gear', '#0EA5E9')
 end)

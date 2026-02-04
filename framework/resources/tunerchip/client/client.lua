@@ -25,7 +25,7 @@ end
 
 local function openTunerChip()
     if not cache.vehicle and cache.seat ~= -1 then 
-        return Zen.Functions.Notify("You need to be in a vehicle", 'car', '#FF0000')
+        return Zen.Functions.Notify("You need to be in a vehicle", 'car', '#EC4899')
     end
 
     local data = json.decode(GetResourceKvpString("tunerchip_data")) or {}

@@ -29,14 +29,14 @@ RegisterNetEvent('usable:item', function(item)
             SetEntityHealth(ped, 200)
             TriggerServerEvent('usable:remove', item)
         else
-            Zen.Functions.Notify("Already Max Health!", 'heart', '#FF0000')
+            Zen.Functions.Notify("Already Max Health!", 'heart', '#EC4899')
         end
     elseif item == 'armour' then 
         if GetPedArmour(ped) ~= 100 then
             SetPedArmour(ped, 100)
             TriggerServerEvent('usable:remove', item)
         else
-            Zen.Functions.Notify("Already Max Armour!", 'shield', '#FF0000')
+            Zen.Functions.Notify("Already Max Armour!", 'shield', '#EC4899')
         end
     elseif item == 'repairkit' then 
         local vehicle = lib.getClosestVehicle(cache.coords, 3.0, true)
@@ -53,7 +53,7 @@ RegisterNetEvent('usable:item', function(item)
                 TriggerServerEvent('usable:remove', 'repairkit')
             end)
         else
-            Zen.Functions.Notify('No vehicles nearby!', 'xmark', '#FF0000')
+            Zen.Functions.Notify('No vehicles nearby!', 'xmark', '#EC4899')
         end
     elseif item == 'clip' then 
         if IsPedArmed(ped, 4) then
@@ -61,14 +61,14 @@ RegisterNetEvent('usable:item', function(item)
             if hash ~= nil then
                 AddAmmoToPed(ped, hash, 900)
             else
-                Zen.Functions.Notify('You Arent Holding A Weapon', 'xmark', '#FF0000')
+                Zen.Functions.Notify('You Arent Holding A Weapon', 'xmark', '#EC4899')
             end
         end
     elseif item == 'tunerchip' then 
         TriggerEvent('tunerchip:use')
     elseif item == 'suppressor' then 
         if not cache.weapon then 
-            return Zen.Functions.Notify('You Arent Holding A Weapon', 'xmark', '#FF0000')
+            return Zen.Functions.Notify('You Arent Holding A Weapon', 'xmark', '#EC4899')
         end
 
         local ped = cache.ped
@@ -76,7 +76,7 @@ RegisterNetEvent('usable:item', function(item)
 
         if weapons[weapon] then 
             if not HasPedGotWeaponComponent(ped, weapon, GetHashKey(weapons[weapon])) then 
-                Zen.Functions.Notify('You Put On Suppressor', 'check', '#00FF00')
+                Zen.Functions.Notify('You Put On Suppressor', 'check', '#0EA5E9')
                 GiveWeaponComponentToPed(ped, weapon, GetHashKey(weapons[weapon]))
                 TriggerServerEvent('usable:remove', 'suppressor')
             end

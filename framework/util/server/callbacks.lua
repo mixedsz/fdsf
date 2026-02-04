@@ -1,6 +1,23 @@
 -- Server-side callback registrations
 -- These callbacks are awaited by client scripts
 
+-- Get real account data for HUD (authoritative server-side data)
+lib.callback.register('hud:getAccounts', function(source)
+    local esx = GetESX()
+    if not esx then return nil end
+    local xPlayer = esx.GetPlayerFromId(source)
+    if not xPlayer then return nil end
+
+    local accounts = xPlayer.getAccounts()
+    local result = {}
+    for _, account in pairs(accounts) do
+        result[account.name] = account.money
+    end
+    -- Also add cash from getMoney()
+    result.money = xPlayer.getMoney()
+    return result
+end)
+
 -- Get player data callback (used by police, takehostage, etc.)
 lib.callback.register('getPlayerData', function(source, targetId)
     local esx = GetESX()
@@ -271,7 +288,7 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
 
     -- Validate data
     if not data.firstName or not data.lastName or not data.birthday or not data.gender then
-        Zen.Functions.Notify(source, 'Please fill out all fields!', 'xmark', '#FF0000')
+        Zen.Functions.Notify(source, 'Please fill out all fields!', 'xmark', '#EC4899')
         return false
     end
 
@@ -281,7 +298,7 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
 
     for _, word in pairs(blacklistedWords) do
         if string.find(fullName, string.lower(word)) then
-            Zen.Functions.Notify(source, 'Name contains blacklisted word!', 'xmark', '#FF0000')
+            Zen.Functions.Notify(source, 'Name contains blacklisted word!', 'xmark', '#EC4899')
             return false
         end
     end
@@ -297,12 +314,12 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
         local ply = Player(source)
         ply.state:set('name', data.firstName .. ' ' .. data.lastName, true)
 
-        Zen.Functions.Notify(source, 'Registration successful!', 'check', '#00FF00')
+        Zen.Functions.Notify(source, 'Registration successful!', 'check', '#0EA5E9')
         Zen.Functions.Log('Player Registered', ('%s registered as %s %s'):format(xPlayer.identifier, data.firstName, data.lastName), 65280)
         return true
     end
 
-    Zen.Functions.Notify(source, 'Registration failed!', 'xmark', '#FF0000')
+    Zen.Functions.Notify(source, 'Registration failed!', 'xmark', '#EC4899')
     return false
 end)
 
@@ -333,7 +350,7 @@ lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, pr
 
     local bankBalance = bankAccount.money or 0
     if bankBalance < price then
-        Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#FF0000')
+        Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#EC4899')
         return false
     end
 
@@ -346,7 +363,7 @@ lib.callback.register('vehicleshop:buy', function(source, props, vehicleType, pr
         VALUES (?, ?, ?, ?, 1)
     ]], { xPlayer.identifier, props.plate, json.encode(props), vehicleType or 'car' })
 
-    Zen.Functions.Notify(source, 'Vehicle purchased successfully!', 'car', '#00FF00')
+    Zen.Functions.Notify(source, 'Vehicle purchased successfully!', 'car', '#0EA5E9')
     Zen.Functions.Log('Vehicle Purchase', ('%s purchased %s for $%s'):format(xPlayer.getName(), label or 'vehicle', price), 65280)
 
     return true

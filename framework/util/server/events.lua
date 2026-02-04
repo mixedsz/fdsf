@@ -47,7 +47,7 @@ RegisterNetEvent('addWeaponToInventory', function(weapon, ammo)
     if not xPlayer then return end
 
     xPlayer.addWeapon(weapon, ammo or 100)
-    Zen.Functions.Notify(source, 'Weapon added to inventory', 'gun', '#00FF00')
+    Zen.Functions.Notify(source, 'Weapon added to inventory', 'gun', '#0EA5E9')
 end)
 
 -- Usable item remove
@@ -86,12 +86,12 @@ RegisterNetEvent('shop:purchase', function(item, amount, shopType)
         if xPlayer.getMoney() >= price then
             xPlayer.removeMoney(price)
             xPlayer.addInventoryItem(item, amount)
-            Zen.Functions.Notify(source, 'Purchased ' .. amount .. 'x ' .. item, 'check', '#00FF00')
+            Zen.Functions.Notify(source, 'Purchased ' .. amount .. 'x ' .. item, 'check', '#0EA5E9')
         else
-            Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Not enough money!', 'dollar', '#EC4899')
         end
     else
-        Zen.Functions.Notify(source, 'Inventory is full!', 'box', '#FF0000')
+        Zen.Functions.Notify(source, 'Inventory is full!', 'box', '#EC4899')
     end
 end)
 
@@ -105,7 +105,7 @@ RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
 
     -- Verify player job if required
     if shopType == 'police' and xPlayer.getJob().name ~= 'police' then
-        return Zen.Functions.Notify(source, 'Access denied!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'Access denied!', 'xmark', '#EC4899')
     end
 
     -- Get weapon price from KMenu config
@@ -123,18 +123,18 @@ RegisterNetEvent('gunstore:purchase', function(paymentType, weapon, shopType)
         if xPlayer.getMoney() >= price then
             xPlayer.removeMoney(price)
             xPlayer.addWeapon(weapon, 100)
-            Zen.Functions.Notify(source, 'Weapon purchased!', 'gun', '#00FF00')
+            Zen.Functions.Notify(source, 'Weapon purchased!', 'gun', '#0EA5E9')
         else
-            Zen.Functions.Notify(source, 'Not enough money! Need $' .. price, 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Not enough money! Need $' .. price, 'dollar', '#EC4899')
         end
     elseif paymentType == 'bank' then
         local bankAccount = xPlayer.getAccount('bank')
         if bankAccount and bankAccount.money >= price then
             xPlayer.removeAccountMoney('bank', price)
             xPlayer.addWeapon(weapon, 100)
-            Zen.Functions.Notify(source, 'Weapon purchased!', 'gun', '#00FF00')
+            Zen.Functions.Notify(source, 'Weapon purchased!', 'gun', '#0EA5E9')
         else
-            Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Not enough money in bank!', 'dollar', '#EC4899')
         end
     end
 end)
@@ -183,9 +183,9 @@ RegisterNetEvent('esx_society:withdrawMoney', function(society, amount)
         if account and account.money >= amount then
             account.removeMoney(amount)
             xPlayer.addMoney(amount)
-            Zen.Functions.Notify(source, 'Withdrew $' .. amount, 'dollar', '#00FF00')
+            Zen.Functions.Notify(source, 'Withdrew $' .. amount, 'dollar', '#0EA5E9')
         else
-            Zen.Functions.Notify(source, 'Not enough funds in society!', 'dollar', '#FF0000')
+            Zen.Functions.Notify(source, 'Not enough funds in society!', 'dollar', '#EC4899')
         end
     end)
 end)
@@ -208,11 +208,11 @@ RegisterNetEvent('esx_society:washMoney', function(society, amount)
         TriggerEvent('esx_addonaccount:getSharedAccount', 'society_' .. society, function(account)
             if account then
                 account.addMoney(amount)
-                Zen.Functions.Notify(source, 'Washed $' .. amount, 'dollar', '#00FF00')
+                Zen.Functions.Notify(source, 'Washed $' .. amount, 'dollar', '#0EA5E9')
             end
         end)
     else
-        Zen.Functions.Notify(source, 'Not enough dirty money!', 'dollar', '#FF0000')
+        Zen.Functions.Notify(source, 'Not enough dirty money!', 'dollar', '#EC4899')
     end
 end)
 

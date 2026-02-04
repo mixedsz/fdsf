@@ -8,7 +8,7 @@ local function handsUp()
     if cache.vehicle then return end
 
     if not Zen.Functions.CanInteract() then 
-        return Zen.Functions.Notify('You Cant Do This Right Now', 'xmark', '#FF0000') 
+        return Zen.Functions.Notify('You Cant Do This Right Now', 'xmark', '#EC4899') 
     end
 
     handsupnigger = not handsupnigger

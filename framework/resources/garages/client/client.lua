@@ -24,7 +24,7 @@ local function OpenPlayerGarage()
     local owned = lib.callback.await('garages:get', false)
 
     if #owned == 0 then 
-        return Zen.Functions.Notify('You Don\'t Own Any Vehicles', 'car', '#FF0000')
+        return Zen.Functions.Notify('You Don\'t Own Any Vehicles', 'car', '#EC4899')
     end
 
     for i = 1, #owned do 

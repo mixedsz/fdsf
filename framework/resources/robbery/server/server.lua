@@ -14,12 +14,12 @@ RegisterNetEvent('robbery:start', function(storeIndex)
     -- Check cooldown
     if robberyCooldowns[storeIndex] and robberyCooldowns[storeIndex] > os.time() then
         local remaining = robberyCooldowns[storeIndex] - os.time()
-        return Zen.Functions.Notify(source, 'This store is on cooldown! ' .. remaining .. 's remaining', 'clock', '#FF0000')
+        return Zen.Functions.Notify(source, 'This store is on cooldown! ' .. remaining .. 's remaining', 'clock', '#EC4899')
     end
 
     -- Check if robbery is already active
     if activRobberies[storeIndex] then
-        return Zen.Functions.Notify(source, 'This store is already being robbed!', 'xmark', '#FF0000')
+        return Zen.Functions.Notify(source, 'This store is already being robbed!', 'xmark', '#EC4899')
     end
 
     -- Check minimum police
@@ -33,7 +33,7 @@ RegisterNetEvent('robbery:start', function(storeIndex)
 
     local minPolice = Zen.Config.Server.Robbery and Zen.Config.Server.Robbery.MinPolice or 0
     if policeCount < minPolice then
-        return Zen.Functions.Notify(source, 'Not enough police online! (' .. policeCount .. '/' .. minPolice .. ')', 'shield', '#FF0000')
+        return Zen.Functions.Notify(source, 'Not enough police online! (' .. policeCount .. '/' .. minPolice .. ')', 'shield', '#EC4899')
     end
 
     -- Start robbery
@@ -52,7 +52,7 @@ RegisterNetEvent('robbery:start', function(storeIndex)
     for _, playerId in pairs(GetPlayers()) do
         local xTarget = ESX.GetPlayerFromId(playerId)
         if xTarget and xTarget.getJob().name == 'police' then
-            Zen.Functions.Notify(playerId, 'A robbery is in progress at ' .. storeData.name .. '!', 'siren', '#FF0000')
+            Zen.Functions.Notify(playerId, 'A robbery is in progress at ' .. storeData.name .. '!', 'siren', '#EC4899')
         end
     end
 
@@ -65,7 +65,7 @@ RegisterNetEvent('robbery:start', function(storeIndex)
             local reward = math.random(storeData.reward[1], storeData.reward[2])
             xPlayer.addAccountMoney('black_money', reward)
 
-            Zen.Functions.Notify(source, 'Robbery complete! You got $' .. reward .. ' dirty money!', 'money-bill', '#00FF00')
+            Zen.Functions.Notify(source, 'Robbery complete! You got $' .. reward .. ' dirty money!', 'money-bill', '#0EA5E9')
 
             -- Stop robbery
             activRobberies[storeIndex] = nil
@@ -98,7 +98,7 @@ RegisterNetEvent('robbery:exited', function(storeIndex)
         -- Remove blip
         TriggerClientEvent('robbery:blip:remove', -1, storeIndex)
 
-        Zen.Functions.Notify(source, 'You left the robbery area!', 'xmark', '#FF0000')
+        Zen.Functions.Notify(source, 'You left the robbery area!', 'xmark', '#EC4899')
 
         Zen.Functions.Log('Robbery Failed', ('%s left the robbery area'):format(GetPlayerName(source)), 16711680)
     end
