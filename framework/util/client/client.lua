@@ -262,3 +262,58 @@ RegisterNetEvent('player:count', function(data)
     playerCount.online = data
 end)
 
+-- ============================================
+-- Disable ESX 1.1.0 built-in HUD money display
+-- ============================================
+-- ESX 1.1.0 draws money with DrawText natives in a loop.
+-- We hide the HUD cash component by overriding ESX.UI.HUD if available,
+-- and also hide the specific GTA HUD components ESX uses.
+CreateThread(function()
+    -- Wait for ESX to be ready
+    while not ESX do Wait(500) end
+
+    -- Try to disable ESX HUD through its API
+    if ESX.UI and ESX.UI.HUD then
+        if ESX.UI.HUD.SetDisplay then
+            ESX.UI.HUD.SetDisplay(0.0)
+        end
+        ESX.UI.HUD.IsVisible = false
+    end
+
+    -- Continuously hide GTA HUD cash component (component 3 = CASH, 4 = BANK)
+    -- This overrides ESX's native text drawing for money
+    while true do
+        HideHudComponentThisFrame(3)  -- CASH
+        HideHudComponentThisFrame(4)  -- MP_CASH
+        Wait(0)
+    end
+end)
+
+-- ============================================
+-- Override esx_ambulancejob death screen
+-- ============================================
+-- Prevent esx_ambulancejob from showing its own death screen.
+-- We intercept its death events and clear its screen effects.
+AddEventHandler('esx_ambulancejob:onPlayerDeath', function()
+    -- Cancel ambulancejob's death handling - we use our own
+    return
+end)
+
+-- Continuously clear ambulancejob death screen effects while our deathscreen is active
+CreateThread(function()
+    while true do
+        Wait(500)
+        if playerDead then
+            -- Clear ambulancejob's greyscale/death effects every half second
+            -- Our deathscreen handles death UI, ambulancejob's overlay is unwanted
+            ClearTimecycleModifier()
+            ClearExtraTimecycleModifier()
+            AnimpostfxStop('DeathFailOut')
+            AnimpostfxStop('DeathFailMPDark')
+            AnimpostfxStop('DeathFailMPIn')
+            AnimpostfxStop('DeathFailNeutralIn')
+            AnimpostfxStop('MP_death_grade_blend01')
+        end
+    end
+end)
+

@@ -345,12 +345,19 @@ for k, v in next, gangs do
 end
 
 RegisterCommand('gang', function()
-    local gangData = stateBag.gang and gangs[stateBag.gang] 
+    if not stateBag.gang or stateBag.gang == '' or stateBag.gang == 'none' then
+        return Zen.Functions.Notify('You are not in a gang!', 'users', '#EC4899')
+    end
 
-    if not gangData then return end
+    local gangData = gangs[stateBag.gang]
 
-    if not gangData.ranks[tonumber(stateBag.gang_rank)].leader then
-        return Zen.Functions.Notify('You Can\'t Interact With This!', 'xmark', '#EC4899')
+    if not gangData then
+        return Zen.Functions.Notify('Gang data not found!', 'xmark', '#EC4899')
+    end
+
+    local rank = tonumber(stateBag.gang_rank) or 0
+    if not gangData.ranks[rank] or not gangData.ranks[rank].leader then
+        return Zen.Functions.Notify('Only gang leaders can manage the gang!', 'xmark', '#EC4899')
     end
 
     openManagementMenu(gangData)
