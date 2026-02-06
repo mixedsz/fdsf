@@ -49,7 +49,8 @@ Zen.Functions.CreateBlip = function(coords, info)
     SetBlipSprite(blip, info.Type)
     SetBlipScale(blip, info.Scale or 0.55)
     SetBlipColour(blip, info.Color)
-    SetBlipAsShortRange(blip, true)
+    -- ShortRange = false means blip shows from any distance on map
+    SetBlipAsShortRange(blip, info.ShortRange or false)
     BeginTextCommandSetBlipName('STRING')
     AddTextComponentSubstringPlayerName(info.Name)
     EndTextCommandSetBlipName(blip)
@@ -61,8 +62,9 @@ Zen.Functions.CreateRadiusBlip = function(coords, data)
     blip = AddBlipForRadius(coords.x, coords.y, coords.z, data.Radius)
     SetBlipSprite(blip, data.Type)
     SetBlipColour(blip, data.Color)
-    SetBlipAlpha(blip, data.Alpha)   
-    SetBlipAsShortRange(blip, true)  
+    SetBlipAlpha(blip, data.Alpha)
+    -- ShortRange = false means radius blip shows from any distance on map
+    SetBlipAsShortRange(blip, data.ShortRange or false)
 
     return blip
 end

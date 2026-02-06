@@ -94,6 +94,10 @@ local function DoRevive(x, y, z, w)
     SetEntityCoordsNoOffset(newPed, targetX, targetY, targetZ, false, false, false)
     SetEntityHeading(newPed, targetW)
 
+    -- Tell esx_ambulancejob that player is no longer dead
+    -- This is CRITICAL - otherwise ESX thinks they're still dead
+    TriggerServerEvent('esx_ambulancejob:setDeathStatus', false)
+
     -- Close deathscreen UI
     Zen.Functions.NUI('closeDeathScreen', {})
     playerDead = false

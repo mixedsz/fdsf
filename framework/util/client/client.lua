@@ -309,6 +309,29 @@ CreateThread(function()
 end)
 
 -- ============================================
+-- Disable weapon wheel globally
+-- ============================================
+-- Player must use inventory system instead of weapon wheel
+CreateThread(function()
+    while true do
+        Wait(0)
+        -- Disable weapon wheel (TAB / L1 on controller)
+        BlockWeaponWheelThisFrame()
+        -- Disable weapon selection keys
+        DisableControlAction(0, 37, true)  -- INPUT_SELECT_WEAPON (TAB)
+        DisableControlAction(0, 157, true) -- INPUT_SELECT_WEAPON_UNARMED
+        DisableControlAction(0, 158, true) -- INPUT_SELECT_WEAPON_MELEE
+        DisableControlAction(0, 159, true) -- INPUT_SELECT_WEAPON_HANDGUN
+        DisableControlAction(0, 160, true) -- INPUT_SELECT_WEAPON_SMG
+        DisableControlAction(0, 161, true) -- INPUT_SELECT_WEAPON_AUTO_RIFLE
+        DisableControlAction(0, 162, true) -- INPUT_SELECT_WEAPON_SHOTGUN
+        DisableControlAction(0, 163, true) -- INPUT_SELECT_WEAPON_SNIPER
+        DisableControlAction(0, 164, true) -- INPUT_SELECT_WEAPON_HEAVY
+        DisableControlAction(0, 165, true) -- INPUT_SELECT_WEAPON_SPECIAL
+    end
+end)
+
+-- ============================================
 -- Disable ESX 1.1.0 built-in HUD money display
 -- ============================================
 -- ESX 1.1.0 draws money with DrawText natives in a loop.
