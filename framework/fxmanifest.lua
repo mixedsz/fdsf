@@ -1,36 +1,22 @@
-shared_script '@WaveShield/resource/include.lua'
+fx_version 'adamant'
+game 'gta5'
 
-fx_version 'cerulean'
-game 'gta5' lua54 'yes'
+Author 'Fast Scripts'
+description 'Fast Loading Screen V3'
+version '1.0'
 
-version 'V1'
-author 'discord.gg/ragerp'
-
-shared_scripts {
-    '@core/imports.lua', 
-    '@ox_lib/init.lua', 
-    'util/shared/*.lua', 
-    'config.lua', 
-    'resources/**/config.lua'
-}
-
-client_scripts { 
-    'util/client/*.lua', 
-    'resources/**/client/*.lua',
-
-}
-
-server_scripts {
-    '@oxmysql/lib/MySQL.lua', 
-    'sconfig.lua', 
-    'resources/**/sconfig.lua', 
-    'util/server/*.lua'
-    , 'resources/**/server/*.lua',
-}
-
-ui_page 'web/build/index.html'
+loadscreen 'web/index.html'
+loadscreen_cursor 'yes'
+loadscreen_manual_shutdown 'yes'
 
 files {
-    'web/build/index.html', 
-    'web/build/assets/**',
+    'config/**.*',
+    'web/**.*',
 }
+
+escrow_ignore {
+    'config/**.*',
+    'web/**.*',
+}
+dependency '/assetpacks'
+dependency '/assetpacks'
