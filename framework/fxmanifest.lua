@@ -39,7 +39,12 @@ files {
     'web/build/assets/**',
     -- Loading Screen files
     'resources/flake_loadingv2/config/config.js',
+    'resources/flake_loadingv2/config/music/*',
+    'resources/flake_loadingv2/config/video/*',
+    'resources/flake_loadingv2/config/slide/*',
     'resources/flake_loadingv2/web/**/*',
     -- Chat HTML files
     'resources/chat/html/**/*',
+    -- Register HTML files
+    'resources/register/html/**/*',
 }
