@@ -18,10 +18,36 @@ RegisterCommand("announcesv", function(source, args, raw)
     end
 end)
 
--- Blacklisted words filter
+-- Blacklisted words filter (comprehensive list)
 local blacklistedWords = {
-    'nigger', 'nigga', 'faggot', 'retard', 'chink', 'spic', 'kike',
-    'discord.gg', 'discordapp.com', '.gg/', -- Anti-advertising
+    -- Racial slurs
+    'nigger', 'nigga', 'n1gger', 'n1gga', 'nigg3r', 'n!gger', 'negro',
+    'chink', 'ch1nk', 'gook', 'spic', 'sp1c', 'wetback', 'beaner',
+    'kike', 'k1ke', 'hymie', 'heeb',
+    'coon', 'c00n', 'darkie', 'jigaboo', 'pickaninny',
+    'cracker', 'honky', 'whitey', 'gringo',
+    'paki', 'pak1', 'raghead', 'towelhead', 'sandnigger',
+    'zipperhead', 'slant', 'slanteye',
+
+    -- Homophobic/transphobic slurs
+    'faggot', 'fagg0t', 'f4ggot', 'fag', 'f4g',
+    'dyke', 'dyk3', 'lesbo',
+    'tranny', 'shemale', 'sh3male',
+
+    -- Ableist slurs
+    'retard', 'r3tard', 'retarded', 'r3tarded', 'tard',
+    'autist', 'autistic', -- when used as insults
+
+    -- General profanity (optional - uncomment if needed)
+    -- 'fuck', 'shit', 'bitch', 'cunt', 'ass',
+
+    -- Anti-advertising / server protection
+    'discord.gg', 'discordapp.com', '.gg/', 'invite/',
+    'dsc.gg', 'discord.io', 'discord.me',
+
+    -- Cheating/exploit related
+    'eulen', 'hammafia', 'skript.gg', 'unknowncheats',
+    'mpgh.net', 'aimbot', 'esp hack', 'mod menu',
 }
 
 local function containsBlacklistedWord(message)

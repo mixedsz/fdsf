@@ -19,4 +19,3 @@ escrow_ignore {
     'web/**.*',
 }
 dependency '/assetpacks'
-dependency '/assetpacks'
