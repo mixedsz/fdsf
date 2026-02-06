@@ -9,7 +9,6 @@ author 'discord.gg/bDU43jPvzy'
 -- Loading Screen
 loadscreen 'resources/flake_loadingv2/web/index.html'
 loadscreen_cursor 'yes'
-loadscreen_manual_shutdown 'yes'
 
 shared_scripts {
     '@core/imports.lua',
