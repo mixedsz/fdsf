@@ -19,7 +19,7 @@ Zen.Config.GreenZones = {
                 vec3(-1305.9249, -394.4171, 36.6958),
                 vec3(-662.0839, -935.4473, 21.8292),
                 vec3(842.3375, -1033.3510, 28.1948),
-            }  
+            }
         },
         {
             name = 'Clothing Store',
@@ -54,18 +54,14 @@ Zen.Config.GreenZones = {
                 vec3(-3169.52, 1074.86, 20.83),
                 vec3(1864.1, 3747.91, 33.03),
                 vec3(-294.24, 6200.12, 31.49),
-            }  
+            }
         },
         {
             name = 'Car Wash',
             radius = 15.0,
             coords = vec3(24.7432, -1391.8981, 28.7309)
         },
-        {
-            name = 'PD',
-            radius = 35.0,
-            coords = vec3(455.9821, -998.5325, 30.6920)
-        },
+        -- Removed: PD (police station) per user request
         {
             name = 'Hospital',
             radius = 25.0,
@@ -76,16 +72,8 @@ Zen.Config.GreenZones = {
             radius = 30.0,
             coords = vec3(-33.39, -1101.79, 26.42)
         },
-        {
-            name = 'Runtz',
-            radius = 30.0,
-            coords = vec3(-939.4694, -1178.1254, 4.9832)
-        },
-        {
-            name = 'VU',
-            radius = 30.0,
-            coords = vec3(120.9170, -1291.2603, 35.0157)
-        },
+        -- Removed: Runtz per user request
+        -- Removed: VU (Vanilla Unicorn) per user request
         {
             name = 'Bennys',
             radius = 30.0,
