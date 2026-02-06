@@ -88,18 +88,17 @@ end)
 
 -- Check if player needs to register after ESX loads them
 AddEventHandler('esx:playerLoaded', function(playerId, xPlayer)
-    -- Small delay to let client initialize
-    SetTimeout(2000, function()
-        local result = MySQL.single.await('SELECT firstname FROM users WHERE identifier = ?', { xPlayer.identifier })
+    -- Check immediately if player needs to register
+    local result = MySQL.single.await('SELECT firstname FROM users WHERE identifier = ?', { xPlayer.identifier })
 
-        if not result or not result.firstname or result.firstname == '' then
-            TriggerClientEvent('register:open', playerId)
-        else
-            -- Set player name state
-            local ply = Player(playerId)
-            if ply then
-                ply.state:set('name', result.firstname .. ' ' .. (result.lastname or ''), true)
-            end
+    if not result or not result.firstname or result.firstname == '' then
+        -- Trigger register immediately
+        TriggerClientEvent('register:open', playerId)
+    else
+        -- Set player name state
+        local ply = Player(playerId)
+        if ply then
+            ply.state:set('name', result.firstname .. ' ' .. (result.lastname or ''), true)
         end
-    end)
+    end
 end)
