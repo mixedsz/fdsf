@@ -7,8 +7,8 @@ Config.YoutubeVideoID = 'uMY9hm0Z_s4' // Youtube video ID (The ID is the last pa
 Config.UpdateCarouselTime = 6; // Time in seconds
 
 Config.ServerName = {
-    first: "City Of Compton",
-    second: "RP",
+    first: "Gulf Coast",
+    second: "Redzone",
     thr: "Version 1"
 }
 
@@ -17,9 +17,9 @@ Config.ServerName = {
 // Only add the platforms you want to display - remove or comment out the ones you don't need
 Config.SocialMedia = {
     ["Discord"]: {
-        link: "https://discord.gg/bsEWMpefph",
+        link: "https://discord.gg/bDU43jPvzy",
         name: "Discord Server",
-        desc: "Join the City Of Compton Discord – connect, compete, and stay in the loop with the community!"
+        desc: "Join Gulf Coast Redzone Discord – connect, compete, and stay in the loop with the community!"
     },
    // ["YouTube"]: {
        // link: "https://www.youtube.com/@flakedevelopment",
