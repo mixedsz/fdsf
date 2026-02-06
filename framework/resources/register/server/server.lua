@@ -10,6 +10,40 @@ local function GetPlayerIdentifier(source)
     return nil
 end
 
+-- Create player in database if they don't exist (runs before ESX loads them)
+AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
+    local source = source
+    local identifier = GetPlayerIdentifier(source)
+
+    if not identifier then return end
+
+    -- Check if player exists
+    local exists = MySQL.single.await('SELECT identifier FROM users WHERE identifier = ?', { identifier })
+
+    if not exists then
+        -- Create new player with default values so ESX can load them
+        print('[Register] Creating new player in database: ' .. identifier)
+        MySQL.insert.await([[
+            INSERT INTO users (identifier, accounts, `group`, inventory, job, job_grade, loadout, metadata, position)
+            VALUES (?, '{"bank": 5000, "money": 500, "black_money": 0}', 'user', '[]', 'unemployed', 0, '[]', '{}', '{"x": -269.4, "y": -955.3, "z": 31.2}')
+        ]], { identifier })
+    end
+end)
+
+-- Callback to check if player needs to register
+lib.callback.register('register:isNewPlayer', function(source)
+    local identifier = GetPlayerIdentifier(source)
+    if not identifier then return false end
+
+    local result = MySQL.single.await('SELECT firstname FROM users WHERE identifier = ?', { identifier })
+
+    -- Player needs to register if no firstname
+    if not result or not result.firstname or result.firstname == '' then
+        return true
+    end
+    return false
+end)
+
 -- Register callback to save player data
 lib.callback.register('fatal:registerPlayer', function(source, data)
     local identifier = GetPlayerIdentifier(source)
@@ -31,31 +65,14 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
         end
     end
 
-    -- Check if player exists in database
-    local exists = MySQL.single.await('SELECT identifier FROM users WHERE identifier = ?', { identifier })
-
-    if exists then
-        -- Update existing player
-        MySQL.update.await('UPDATE users SET firstname = ?, lastname = ?, dateofbirth = ?, sex = ? WHERE identifier = ?', {
-            data.firstName,
-            data.lastName,
-            data.birthday,
-            data.gender == 'male' and 'm' or 'f',
-            identifier
-        })
-    else
-        -- Insert new player with all required fields
-        MySQL.insert.await([[
-            INSERT INTO users (identifier, accounts, `group`, inventory, job, job_grade, loadout, metadata, position, firstname, lastname, dateofbirth, sex)
-            VALUES (?, '{"bank": 5000, "money": 500, "black_money": 0}', 'user', '[]', 'unemployed', 0, '[]', '{}', '{"x": -269.4, "y": -955.3, "z": 31.2}', ?, ?, ?, ?)
-        ]], {
-            identifier,
-            data.firstName,
-            data.lastName,
-            data.birthday,
-            data.gender == 'male' and 'm' or 'f'
-        })
-    end
+    -- Update player with their name
+    MySQL.update.await('UPDATE users SET firstname = ?, lastname = ?, dateofbirth = ?, sex = ? WHERE identifier = ?', {
+        data.firstName,
+        data.lastName,
+        data.birthday,
+        data.gender == 'male' and 'm' or 'f',
+        identifier
+    })
 
     -- Update player name state
     local ply = Player(source)
@@ -63,47 +80,26 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
         ply.state:set('name', data.firstName .. ' ' .. data.lastName, true)
     end
 
-    Zen.Functions.Notify(source, 'Registration complete! Reconnecting...', 'check', '#0EA5E9')
-
-    -- Log registration
+    Zen.Functions.Notify(source, 'Character created successfully!', 'check', '#0EA5E9')
     print(('[Register] Player %s registered as %s %s'):format(identifier, data.firstName, data.lastName))
-
-    -- Kick player to reconnect so ESX loads them properly
-    SetTimeout(2000, function()
-        DropPlayer(source, 'Registration complete! Please reconnect to start playing.')
-    end)
 
     return true
 end)
 
--- Check if player needs to register after loading
+-- Check if player needs to register after ESX loads them
 AddEventHandler('esx:playerLoaded', function(playerId, xPlayer)
-    local result = MySQL.single.await('SELECT firstname, lastname FROM users WHERE identifier = ?', { xPlayer.identifier })
+    -- Small delay to let client initialize
+    SetTimeout(2000, function()
+        local result = MySQL.single.await('SELECT firstname FROM users WHERE identifier = ?', { xPlayer.identifier })
 
-    if not result or not result.firstname or result.firstname == '' or result.firstname == nil then
-        TriggerClientEvent('register:open', playerId)
-    else
-        -- Set player name state
-        local ply = Player(playerId)
-        if ply then
-            ply.state:set('name', result.firstname .. ' ' .. result.lastname, true)
+        if not result or not result.firstname or result.firstname == '' then
+            TriggerClientEvent('register:open', playerId)
+        else
+            -- Set player name state
+            local ply = Player(playerId)
+            if ply then
+                ply.state:set('name', result.firstname .. ' ' .. (result.lastname or ''), true)
+            end
         end
-    end
-end)
-
--- Also trigger for players who don't exist in DB yet
-RegisterNetEvent('esx:playerLoading', function()
-    local source = source
-    local identifier = GetPlayerIdentifier(source)
-
-    if not identifier then return end
-
-    local result = MySQL.single.await('SELECT firstname, lastname FROM users WHERE identifier = ?', { identifier })
-
-    -- If player doesn't exist or has no name, open register
-    if not result or not result.firstname or result.firstname == '' then
-        SetTimeout(5000, function()
-            TriggerClientEvent('register:open', source)
-        end)
-    end
+    end)
 end)
