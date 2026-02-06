@@ -1,6 +1,20 @@
 -- Server-side event handlers
 -- These events are triggered by client scripts
 
+-- Chat message blacklist filter
+AddEventHandler('chatMessage', function(source, name, message)
+    local blacklistedWords = (Zen.Config and Zen.Config.Server and Zen.Config.Server.BlacklistedWords) or {}
+    local lowerMsg = string.lower(message)
+
+    for _, word in pairs(blacklistedWords) do
+        if string.find(lowerMsg, string.lower(word)) then
+            CancelEvent()
+            Zen.Functions.Notify(source, 'Your message contains a blacklisted word!', 'xmark', '#EC4899')
+            return
+        end
+    end
+end)
+
 -- Gangs player loaded event
 RegisterNetEvent('gangs:playerLoaded', function()
     local source = source

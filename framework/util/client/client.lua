@@ -263,6 +263,52 @@ RegisterNetEvent('player:count', function(data)
 end)
 
 -- ============================================
+-- Weapon and ammo info for HUD
+-- ============================================
+CreateThread(function()
+    local lastWeapon = nil
+    local lastAmmo = -1
+
+    while true do
+        Wait(200)
+        local ped = PlayerPedId()
+        local _, currentWeapon = GetCurrentPedWeapon(ped, true)
+
+        if currentWeapon and currentWeapon ~= `WEAPON_UNARMED` then
+            local ammoCount = GetAmmoInPedWeapon(ped, currentWeapon)
+            local clipSize = GetMaxAmmoInClip(ped, currentWeapon, true)
+            local _, ammoInClip = GetAmmoInClip(ped, currentWeapon)
+
+            if currentWeapon ~= lastWeapon or ammoCount ~= lastAmmo then
+                lastWeapon = currentWeapon
+                lastAmmo = ammoCount
+
+                -- Get weapon name from hash
+                local weaponName = Zen.Weapons and Zen.Weapons[Zen.HashKey and Zen.HashKey[currentWeapon]] or 'Weapon'
+
+                SendNUIMessage({
+                    action = 'UpdateWeaponHud',
+                    data = {
+                        show = true,
+                        weapon = weaponName,
+                        ammo = ammoInClip .. ' / ' .. ammoCount
+                    }
+                })
+            end
+        else
+            if lastWeapon ~= nil then
+                lastWeapon = nil
+                lastAmmo = -1
+                SendNUIMessage({
+                    action = 'UpdateWeaponHud',
+                    data = { show = false }
+                })
+            end
+        end
+    end
+end)
+
+-- ============================================
 -- Disable ESX 1.1.0 built-in HUD money display
 -- ============================================
 -- ESX 1.1.0 draws money with DrawText natives in a loop.
@@ -292,20 +338,43 @@ end)
 -- ============================================
 -- Override esx_ambulancejob death screen
 -- ============================================
--- Prevent esx_ambulancejob from showing its own death screen.
--- We intercept its death events and clear its screen effects.
+-- Aggressively disable esx_ambulancejob's death handling.
+-- We set ESX.PlayerData.dead = false so ambulancejob thinks the player is alive,
+-- while our own deathscreen uses the 'playerDead' variable instead.
+
+-- Override ambulancejob death events
 AddEventHandler('esx_ambulancejob:onPlayerDeath', function()
-    -- Cancel ambulancejob's death handling - we use our own
     return
 end)
 
--- Continuously clear ambulancejob death screen effects while our deathscreen is active
+-- When our framework detects death, tell ESX the player is NOT dead
+-- This prevents ambulancejob from running its death loop/timer
+AddEventHandler('esx:onPlayerDeath', function()
+    Wait(100)
+    -- Override ESX's death state so ambulancejob doesn't show its screen
+    local esx = GetESX()
+    if esx then
+        local playerData = esx.GetPlayerData()
+        if playerData then
+            playerData.dead = false
+        end
+    end
+end)
+
+-- Continuously suppress ambulancejob effects and override its death state
 CreateThread(function()
     while true do
-        Wait(500)
         if playerDead then
-            -- Clear ambulancejob's greyscale/death effects every half second
-            -- Our deathscreen handles death UI, ambulancejob's overlay is unwanted
+            -- Override ESX dead state to prevent ambulancejob from showing its UI
+            local esx = GetESX()
+            if esx then
+                local playerData = esx.GetPlayerData()
+                if playerData then
+                    playerData.dead = false
+                end
+            end
+
+            -- Clear all death screen effects ambulancejob may apply
             ClearTimecycleModifier()
             ClearExtraTimecycleModifier()
             AnimpostfxStop('DeathFailOut')
@@ -313,6 +382,13 @@ CreateThread(function()
             AnimpostfxStop('DeathFailMPIn')
             AnimpostfxStop('DeathFailNeutralIn')
             AnimpostfxStop('MP_death_grade_blend01')
+
+            -- Clear help text that ambulancejob shows ("Do /911...")
+            ClearAllHelpMessages()
+
+            Wait(100)
+        else
+            Wait(1000)
         end
     end
 end)

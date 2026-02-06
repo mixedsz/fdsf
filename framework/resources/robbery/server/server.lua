@@ -31,7 +31,8 @@ RegisterNetEvent('robbery:start', function(storeIndex)
         end
     end
 
-    local minPolice = Zen.Config.Server.Robbery and Zen.Config.Server.Robbery.MinPolice or 0
+    -- Use per-store cops requirement from config, fallback to global MinPolice, fallback to 0
+    local minPolice = storeData.cops or (Zen.Config.Server.Robbery and Zen.Config.Server.Robbery.MinPolice) or 0
     if policeCount < minPolice then
         return Zen.Functions.Notify(source, 'Not enough police online! (' .. policeCount .. '/' .. minPolice .. ')', 'shield', '#EC4899')
     end

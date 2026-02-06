@@ -23,13 +23,21 @@ local function DoRevive(x, y, z, w)
     DoScreenFadeOut(100)
     Wait(200)
 
+    -- Store target coords for later enforcement
+    local targetX, targetY, targetZ, targetW = x, y, z, w or 0.0
+
     local ped = PlayerPedId()
 
-    SetEntityCoordsNoOffset(ped, x, y, z, false, false, false)
-    NetworkResurrectLocalPlayer(x, y, z, w or 0.0, true, false)
+    -- Resurrect player first
+    NetworkResurrectLocalPlayer(targetX, targetY, targetZ, targetW, true, false)
+    Wait(100)
+
+    -- Force set coordinates after resurrection
+    local newPed = PlayerPedId()
+    SetEntityCoordsNoOffset(newPed, targetX, targetY, targetZ, false, false, false)
+    SetEntityHeading(newPed, targetW)
 
     -- Clear all death-related state
-    local newPed = PlayerPedId()
     ClearPedBloodDamage(newPed)
     SetEntityHealth(newPed, GetEntityMaxHealth(newPed))
     ClearPedTasksImmediately(newPed)
@@ -56,21 +64,35 @@ local function DoRevive(x, y, z, w)
         DoScreenFadeIn(0)
     end
 
-    Wait(200)
+    Wait(100)
     DoScreenFadeIn(500)
+
+    -- CRITICAL: Re-set coordinates BEFORE triggering spawn events
+    -- This ensures we're at the target location first
+    SetEntityCoordsNoOffset(newPed, targetX, targetY, targetZ, false, false, false)
+    SetEntityHeading(newPed, targetW)
 
     -- Trigger ESX spawn events (this is what esx_ambulancejob listens for)
     TriggerServerEvent('esx:onPlayerSpawn')
     TriggerEvent('esx:onPlayerSpawn')
     TriggerEvent('playerSpawned')
 
+    -- CRITICAL: Re-set coordinates AFTER spawn events to override any ambulancejob teleporting
+    Wait(200)
+    SetEntityCoordsNoOffset(newPed, targetX, targetY, targetZ, false, false, false)
+    SetEntityHeading(newPed, targetW)
+
     -- Clear timecycle again after events in case ambulancejob re-applied it
-    Wait(500)
+    Wait(300)
     ClearTimecycleModifier()
     ClearExtraTimecycleModifier()
     AnimpostfxStop('DeathFailOut')
     AnimpostfxStop('DeathFailMPDark')
     AnimpostfxStop('DeathFailMPIn')
+
+    -- Final coordinate enforcement after all events
+    SetEntityCoordsNoOffset(newPed, targetX, targetY, targetZ, false, false, false)
+    SetEntityHeading(newPed, targetW)
 
     -- Close deathscreen UI
     Zen.Functions.NUI('closeDeathScreen', {})

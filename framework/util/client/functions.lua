@@ -7,7 +7,7 @@ Zen.Functions.Notify = function(text, icon, color)
         position = 'top',
         icon = icon,
         duration = 3000,
-        iconColor = color or '#ff0004'
+        iconColor = color or '#0EA5E9'
     })
 end
 
@@ -28,10 +28,14 @@ Zen.Functions.FormatSeconds = function(seconds)
     return ('%s:%s'):format(minutes, secs)
 end
 
+local floatTextCounter = 0
+
 Zen.Functions.FloatText = function(coords, text)
-    AddTextEntry(GetCurrentResourceName(), text)
-    BeginTextCommandDisplayHelp(GetCurrentResourceName())
-    EndTextCommandDisplayHelp(2, false, false, -1) 
+    floatTextCounter = floatTextCounter + 1
+    local key = ('ZEN_FT_%d'):format(floatTextCounter % 100)
+    AddTextEntry(key, text)
+    BeginTextCommandDisplayHelp(key)
+    EndTextCommandDisplayHelp(2, false, false, -1)
     SetFloatingHelpTextWorldPosition(1, coords.x, coords.y, coords.z)
     SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
 end
