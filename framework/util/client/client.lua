@@ -21,6 +21,40 @@ function GetESX()
     return ESX
 end
 
+-- ============================================
+-- SPAWN HANDLER - Required for newer ESX
+-- ============================================
+-- Since we're not using esx_identity/multicharacter,
+-- we need to handle the spawn ourselves
+local hasSpawned = false
+
+AddEventHandler('esx:onPlayerLogout', function()
+    hasSpawned = false
+end)
+
+-- Set up spawnmanager to spawn the player
+exports.spawnmanager:setAutoSpawnCallback(function()
+    if hasSpawned then return end
+    hasSpawned = true
+
+    -- Spawn at default coords (will be updated by ESX position)
+    exports.spawnmanager:spawnPlayer({
+        x = -269.4,
+        y = -955.3,
+        z = 31.2,
+        heading = 0.0,
+        model = 'mp_m_freemode_01',
+        skipFade = false
+    }, function()
+        -- Notify ESX that the player has spawned
+        TriggerEvent('playerSpawned')
+        TriggerServerEvent('esx:onPlayerSpawn')
+    end)
+end)
+
+exports.spawnmanager:setAutoSpawn(true)
+exports.spawnmanager:forceRespawn()
+
 stateBag = LocalPlayer.state
 playerCount = {
     online = 0,
