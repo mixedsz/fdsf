@@ -76,27 +76,6 @@ lib.callback.register('fatal:registerPlayer', function(source, data)
     return true
 end)
 
--- Check if player needs to register when they connect
-AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
-    local source = source
-    deferrals.defer()
-    Wait(0)
-
-    deferrals.update('Checking registration status...')
-
-    local identifier = GetPlayerIdentifier(source)
-    if not identifier then
-        deferrals.done('Could not verify your license. Please restart FiveM.')
-        return
-    end
-
-    -- Check if player exists and has a name
-    local result = MySQL.single.await('SELECT firstname, lastname FROM users WHERE identifier = ?', { identifier })
-
-    Wait(100)
-    deferrals.done()
-end)
-
 -- Check if player needs to register after loading
 AddEventHandler('esx:playerLoaded', function(playerId, xPlayer)
     local result = MySQL.single.await('SELECT firstname, lastname FROM users WHERE identifier = ?', { xPlayer.identifier })
