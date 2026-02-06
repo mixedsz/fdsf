@@ -1,5 +1,10 @@
 -- Register Server-side Code
 
+-- Generate random SSN
+local function GenerateSSN()
+    return string.format('%03d-%02d-%04d', math.random(100, 999), math.random(10, 99), math.random(1000, 9999))
+end
+
 -- Get player identifier
 local function GetPlayerIdentifier(source)
     for _, id in ipairs(GetPlayerIdentifiers(source)) do
@@ -21,12 +26,15 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     local exists = MySQL.single.await('SELECT identifier FROM users WHERE identifier = ?', { identifier })
 
     if not exists then
-        -- Create new player with default values so ESX can load them
+        -- Generate unique SSN
+        local ssn = GenerateSSN()
+
+        -- Create new player with ALL required columns so ESX can load them
         print('[Register] Creating new player in database: ' .. identifier)
         MySQL.insert.await([[
-            INSERT INTO users (identifier, accounts, `group`, inventory, job, job_grade, loadout, metadata, position)
-            VALUES (?, '{"bank": 5000, "money": 500, "black_money": 0}', 'user', '[]', 'unemployed', 0, '[]', '{}', '{"x": -269.4, "y": -955.3, "z": 31.2}')
-        ]], { identifier })
+            INSERT INTO users (identifier, accounts, `group`, inventory, job, job_grade, loadout, metadata, position, skin, ssn, height)
+            VALUES (?, '{"bank": 5000, "money": 500, "black_money": 0}', 'user', '[]', 'unemployed', 0, '[]', '{}', '{"x": -269.4, "y": -955.3, "z": 31.2}', '{}', ?, 170)
+        ]], { identifier, ssn })
     end
 end)
 
